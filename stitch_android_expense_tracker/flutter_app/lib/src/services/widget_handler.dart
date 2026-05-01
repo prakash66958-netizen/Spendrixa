@@ -100,7 +100,7 @@ Future<void> backgroundCallback(Uri? uri) async {
 }
 
 class WidgetHandler {
-  static const String _appGroupId = 'com.vault.lumina';
+  static const String _appGroupId = 'com.spendrixa.app';
 
   static Future<void> initialize() async {
     await HomeWidget.setAppGroupId(_appGroupId);

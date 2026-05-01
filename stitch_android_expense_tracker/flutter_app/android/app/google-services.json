@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:45467822444:android:b52140c80f5002563e6b49",
+        "mobilesdk_app_id": "1:45467822444:android:4dabe29aab60e9513e6b49",
         "android_client_info": {
-          "package_name": "com.vault.lumina"
+          "package_name": "com.spendrixa.app"
         }
       },
       "oauth_client": [
