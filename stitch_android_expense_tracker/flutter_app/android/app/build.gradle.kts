@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.vault.lumina"
+    namespace = "com.spendrixa.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -21,7 +21,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.vault.lumina"
+        applicationId = "com.spendrixa.app"
         minSdk = 26
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

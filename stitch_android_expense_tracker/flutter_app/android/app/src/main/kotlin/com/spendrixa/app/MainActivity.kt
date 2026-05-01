@@ -1,4 +1,4 @@
-package com.vault.lumina
+package com.spendrixa.app
 
 import io.flutter.embedding.android.FlutterActivity
 

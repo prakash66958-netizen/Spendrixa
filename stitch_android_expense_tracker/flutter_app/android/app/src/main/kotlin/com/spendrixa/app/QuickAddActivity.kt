@@ -1,4 +1,4 @@
-package com.vault.lumina
+package com.spendrixa.app
 
 import android.app.Activity
 import android.content.Intent
@@ -12,7 +12,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
-import com.vault.lumina.R
+import com.spendrixa.app.R
 
 class QuickAddActivity : Activity() {
 
