@@ -18,10 +18,12 @@ import com.spendrixa.app.ui.screens.DashboardScreen
 import com.spendrixa.app.ui.screens.HistoryScreen
 import com.spendrixa.app.ui.screens.InsightsScreen
 import com.spendrixa.app.ui.screens.LoginScreen
+import com.spendrixa.app.ui.screens.VerifyEmailScreen
 import com.spendrixa.app.ui.theme.SpendrixaTheme
 
 private object Routes {
     const val LOGIN = "login"
+    const val VERIFY_EMAIL = "verify_email"
     const val DASHBOARD = "dashboard"
     const val ADD_TRANSACTION = "add_transaction"
     const val HISTORY = "history"
@@ -65,12 +67,22 @@ fun SpendrixaApp(
     val navController = rememberNavController()
     val currentUser by authService.currentUser.collectAsState()
     val isLoggedIn = currentUser != null
+    val isEmailVerified = currentUser?.isEmailVerified == true
 
-    LaunchedEffect(isLoggedIn) {
+    LaunchedEffect(isLoggedIn, isEmailVerified) {
         onLoginStateChanged(isLoggedIn)
+        if (isLoggedIn && !isEmailVerified) {
+            navController.navigate(Routes.VERIFY_EMAIL) {
+                popUpTo(0) { inclusive = true }
+            }
+        }
     }
 
-    val startDestination = if (isLoggedIn) Routes.DASHBOARD else Routes.LOGIN
+    val startDestination = if (isLoggedIn) {
+        if (isEmailVerified) Routes.DASHBOARD else Routes.VERIFY_EMAIL
+    } else {
+        Routes.LOGIN
+    }
 
     NavHost(
         navController = navController,
@@ -80,8 +92,25 @@ fun SpendrixaApp(
             LoginScreen(
                 authService = authService,
                 onLoginSuccess = {
+                    val user = authService.currentUser.value
+                    if (user?.isEmailVerified == true) {
+                        navController.navigate(Routes.DASHBOARD) {
+                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate(Routes.VERIFY_EMAIL) {
+                            popUpTo(Routes.LOGIN) { inclusive = true }
+                        }
+                    }
+                }
+            )
+        }
+        composable(Routes.VERIFY_EMAIL) {
+            VerifyEmailScreen(
+                authService = authService,
+                onVerified = {
                     navController.navigate(Routes.DASHBOARD) {
-                        popUpTo(Routes.LOGIN) { inclusive = true }
+                        popUpTo(Routes.VERIFY_EMAIL) { inclusive = true }
                     }
                 }
             )

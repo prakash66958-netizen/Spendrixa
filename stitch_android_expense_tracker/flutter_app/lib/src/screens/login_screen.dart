@@ -54,6 +54,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (credential.user != null) {
         await widget.repository.ensureUserProfile(credential.user!);
+        if (_isSignUp) {
+          await credential.user!.sendEmailVerification();
+        }
       }
     } on FirebaseAuthException catch (error) {
       setState(() {

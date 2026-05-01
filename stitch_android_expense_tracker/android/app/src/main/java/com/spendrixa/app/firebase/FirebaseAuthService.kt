@@ -36,10 +36,30 @@ class FirebaseAuthService(
         return try {
             val result = auth.createUserWithEmailAndPassword(email, password).await()
             result.user?.let {
+                it.sendEmailVerification().await()
                 ensureUserProfile(it)
                 _currentUser.value = it
                 Result.success(it)
             } ?: Result.failure(Exception("Sign up failed"))
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun reloadUser(): Result<Unit> {
+        return try {
+            auth.currentUser?.reload()?.await()
+            _currentUser.value = auth.currentUser
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    suspend fun resendVerificationEmail(): Result<Unit> {
+        return try {
+            auth.currentUser?.sendEmailVerification()?.await()
+            Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
         }

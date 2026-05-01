@@ -49,7 +49,8 @@ form.addEventListener('submit', async (e) => {
 
     try {
         if (isSignUp) {
-            await auth.createUserWithEmailAndPassword(email, password);
+            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+            await userCredential.user.sendEmailVerification();
         } else {
             await auth.signInWithEmailAndPassword(email, password);
         }

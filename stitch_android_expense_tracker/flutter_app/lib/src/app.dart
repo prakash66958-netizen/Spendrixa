@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'screens/home_shell.dart';
 import 'screens/login_screen.dart';
+import 'screens/verify_email_screen.dart';
 import 'services/transaction_repository.dart';
 import 'theme/app_theme.dart';
 
@@ -44,6 +45,10 @@ class _AuthGateState extends State<AuthGate> {
         final User? user = authSnapshot.data;
         if (user == null) {
           return LoginScreen(repository: _repository);
+        }
+
+        if (!user.emailVerified) {
+          return const VerifyEmailScreen();
         }
 
         return FutureBuilder<void>(
