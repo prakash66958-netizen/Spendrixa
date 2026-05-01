@@ -265,7 +265,8 @@ auth.onAuthStateChanged(user=>{
             <div class="flex flex-col items-center justify-center h-screen bg-slate-50 font-sans p-6 text-center">
                 <span class="material-symbols-outlined text-blue-600 text-7xl mb-6">mark_email_unread</span>
                 <h1 class="text-2xl font-bold text-slate-900 mb-2">Verify your email</h1>
-                <p class="text-slate-600 mb-8 max-w-md">We've sent a link to <b>${user.email}</b>. Please verify your email to access your dashboard.</p>
+                <p class="text-slate-600 mb-2 max-w-md">We've sent a link to <b>${user.email}</b>. Please verify your email to access your dashboard.</p>
+                <p class="text-xs text-slate-400 mb-8 italic">Note: If you already verified, click "I've verified" or refresh the page.</p>
                 <div class="flex gap-4">
                     <button onclick="auth.currentUser.sendEmailVerification().then(() => alert('Email resent!'))" class="bg-blue-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition-all">Resend Email</button>
                     <button onclick="auth.signOut()" class="bg-white border border-slate-200 text-slate-700 px-6 py-2.5 rounded-lg font-semibold hover:bg-slate-50 transition-all">Logout</button>
