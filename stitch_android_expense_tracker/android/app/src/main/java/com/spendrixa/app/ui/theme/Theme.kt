@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.theme
+package com.spendrixa.app.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -52,7 +52,7 @@ fun SpendrixaTheme(
 ) {
     MaterialTheme(
         colorScheme = SpendrixaDarkScheme,
-        typography = VaultTypography,
+        typography = SpendrixaTypography,
         shapes = SpendrixaShapes,
         content = content
     )

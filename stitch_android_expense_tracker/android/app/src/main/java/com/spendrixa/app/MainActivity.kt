@@ -1,4 +1,4 @@
-package com.vault.lumina
+package com.spendrixa.app
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,14 +11,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
-import com.vault.lumina.data.repository.TransactionRepository
-import com.vault.lumina.firebase.FirebaseAuthService
-import com.vault.lumina.ui.screens.AddTransactionScreen
-import com.vault.lumina.ui.screens.DashboardScreen
-import com.vault.lumina.ui.screens.HistoryScreen
-import com.vault.lumina.ui.screens.InsightsScreen
-import com.vault.lumina.ui.screens.LoginScreen
-import com.vault.lumina.ui.theme.SpendrixaTheme
+import com.spendrixa.app.data.repository.TransactionRepository
+import com.spendrixa.app.firebase.FirebaseAuthService
+import com.spendrixa.app.ui.screens.AddTransactionScreen
+import com.spendrixa.app.ui.screens.DashboardScreen
+import com.spendrixa.app.ui.screens.HistoryScreen
+import com.spendrixa.app.ui.screens.InsightsScreen
+import com.spendrixa.app.ui.screens.LoginScreen
+import com.spendrixa.app.ui.theme.SpendrixaTheme
 
 private object Routes {
     const val LOGIN = "login"
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
             SpendrixaTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = com.vault.lumina.ui.theme.Background
+                    color = com.spendrixa.app.ui.theme.Background
                 ) {
                     SpendrixaApp(
                         authService = authService,

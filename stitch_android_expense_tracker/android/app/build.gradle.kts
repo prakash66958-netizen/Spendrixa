@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.vault.lumina"
+    namespace = "com.spendrixa.app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.vault.lumina"
+        applicationId = "com.spendrixa.app"
         minSdk = 26
         targetSdk = 34
         versionCode = 1

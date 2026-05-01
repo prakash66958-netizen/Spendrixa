@@ -1,10 +1,10 @@
-package com.vault.lumina.data.repository
+package com.spendrixa.app.data.repository
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
-import com.vault.lumina.data.model.Transaction
+import com.spendrixa.app.data.model.Transaction
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.callbackFlow

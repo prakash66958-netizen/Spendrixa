@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.components
+package com.spendrixa.app.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,9 +26,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vault.lumina.ui.theme.OnSurfaceVariant
-import com.vault.lumina.ui.theme.Primary
-import com.vault.lumina.ui.theme.SurfaceContainer
+import com.spendrixa.app.ui.theme.OnSurfaceVariant
+import com.spendrixa.app.ui.theme.Primary
+import com.spendrixa.app.ui.theme.SurfaceContainer
 
 @Composable
 fun SpendrixaBottomBar(

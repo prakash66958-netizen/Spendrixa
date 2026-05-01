@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.screens
+package com.spendrixa.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,11 +23,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vault.lumina.data.model.Transaction
-import com.vault.lumina.data.model.TransactionCategory
-import com.vault.lumina.data.model.TransactionType
-import com.vault.lumina.data.repository.TransactionRepository
-import com.vault.lumina.ui.theme.*
+import com.spendrixa.app.data.model.Transaction
+import com.spendrixa.app.data.model.TransactionCategory
+import com.spendrixa.app.data.model.TransactionType
+import com.spendrixa.app.data.repository.TransactionRepository
+import com.spendrixa.app.ui.theme.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,7 +42,7 @@ fun AddTransactionScreen(
     var amount by remember { mutableStateOf("") }
     var selectedExpenseCategory by remember { mutableStateOf(TransactionCategory.FOOD) }
     var note by remember { mutableStateOf("") }
-    var paymentMethod by remember { mutableStateOf("Vault Platinum Card (...4290)") }
+    var paymentMethod by remember { mutableStateOf("Spendrixa Platinum Card (...4290)") }
     var isSaving by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val scope = rememberCoroutineScope()
@@ -397,7 +397,7 @@ fun AddTransactionScreen(
                 )
             }
             Text(
-                text = "Vault",
+                text = "Spendrixa",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = OnSurface

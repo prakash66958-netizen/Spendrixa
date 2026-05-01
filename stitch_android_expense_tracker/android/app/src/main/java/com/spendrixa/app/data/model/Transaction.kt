@@ -1,4 +1,4 @@
-package com.vault.lumina.data.model
+package com.spendrixa.app.data.model
 
 data class Transaction(
     val id: String = "",

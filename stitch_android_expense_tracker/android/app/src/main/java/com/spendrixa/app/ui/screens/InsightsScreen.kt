@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.screens
+package com.spendrixa.app.ui.screens
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -43,24 +43,24 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vault.lumina.data.model.Transaction
-import com.vault.lumina.data.model.TransactionCategory
-import com.vault.lumina.data.model.TransactionType
-import com.vault.lumina.data.repository.TransactionRepository
-import com.vault.lumina.ui.components.VaultBottomBar
-import com.vault.lumina.ui.theme.Background
-import com.vault.lumina.ui.theme.OnBackground
-import com.vault.lumina.ui.theme.OnSurface
-import com.vault.lumina.ui.theme.OnSurfaceVariant
-import com.vault.lumina.ui.theme.Outline
-import com.vault.lumina.ui.theme.Primary
-import com.vault.lumina.ui.theme.SecondaryContainer
-import com.vault.lumina.ui.theme.SurfaceContainer
-import com.vault.lumina.ui.theme.SurfaceContainerHigh
-import com.vault.lumina.ui.theme.SurfaceContainerHighest
-import com.vault.lumina.ui.theme.SurfaceContainerLow
-import com.vault.lumina.ui.theme.Tertiary
-import com.vault.lumina.ui.theme.TertiaryContainer
+import com.spendrixa.app.data.model.Transaction
+import com.spendrixa.app.data.model.TransactionCategory
+import com.spendrixa.app.data.model.TransactionType
+import com.spendrixa.app.data.repository.TransactionRepository
+import com.spendrixa.app.ui.components.SpendrixaBottomBar
+import com.spendrixa.app.ui.theme.Background
+import com.spendrixa.app.ui.theme.OnBackground
+import com.spendrixa.app.ui.theme.OnSurface
+import com.spendrixa.app.ui.theme.OnSurfaceVariant
+import com.spendrixa.app.ui.theme.Outline
+import com.spendrixa.app.ui.theme.Primary
+import com.spendrixa.app.ui.theme.SecondaryContainer
+import com.spendrixa.app.ui.theme.SurfaceContainer
+import com.spendrixa.app.ui.theme.SurfaceContainerHigh
+import com.spendrixa.app.ui.theme.SurfaceContainerHighest
+import com.spendrixa.app.ui.theme.SurfaceContainerLow
+import com.spendrixa.app.ui.theme.Tertiary
+import com.spendrixa.app.ui.theme.TertiaryContainer
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -371,7 +371,7 @@ fun InsightsScreen(
                 )
             }
             Text(
-                text = "Vault",
+                text = "Spendrixa",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = OnSurface
@@ -391,7 +391,7 @@ fun InsightsScreen(
             }
         }
 
-        VaultBottomBar(
+        SpendrixaBottomBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             currentRoute = "insights",
             onDashboardClick = onNavigateDashboard,

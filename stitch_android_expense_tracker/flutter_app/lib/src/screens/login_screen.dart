@@ -96,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 12),
                     Text(
-                      'Vault',
+                      'Spendrixa',
                       textAlign: TextAlign.center,
                       style: theme.textTheme.headlineMedium,
                     ),

@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.theme
+package com.spendrixa.app.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
@@ -7,7 +7,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 // Using system fonts as fallback - can add Manrope/Inter via font assets later
-val VaultTypography = Typography(
+val SpendrixaTypography = Typography(
     displayLarge = TextStyle(
         fontFamily = FontFamily.SansSerif,
         fontWeight = FontWeight.ExtraBold,

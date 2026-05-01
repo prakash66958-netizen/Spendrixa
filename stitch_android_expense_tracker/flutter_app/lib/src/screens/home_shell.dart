@@ -218,7 +218,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
   String _titleForIndex() {
     switch (_currentIndex) {
       case 0:
-        return 'Vault';
+        return 'Dashboard';
       case 1:
         return 'History';
       case 2:
@@ -226,7 +226,7 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
       case 3:
         return 'Settings';
       default:
-        return 'Vault';
+        return 'Dashboard';
     }
   }
 }

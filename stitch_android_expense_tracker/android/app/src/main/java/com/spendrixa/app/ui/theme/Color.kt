@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.theme
+package com.spendrixa.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

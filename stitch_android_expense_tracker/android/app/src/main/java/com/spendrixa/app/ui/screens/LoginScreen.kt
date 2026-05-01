@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.screens
+package com.spendrixa.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -17,8 +17,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vault.lumina.firebase.FirebaseAuthService
-import com.vault.lumina.ui.theme.*
+import com.spendrixa.app.firebase.FirebaseAuthService
+import com.spendrixa.app.ui.theme.*
 import kotlinx.coroutines.launch
 
 @Composable
@@ -55,7 +55,7 @@ fun LoginScreen(
         ) {
             // Logo and Title
             Text(
-                text = "Vault",
+                text = "Spendrixa",
                 fontSize = 48.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = OnSurface

@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.screens
+package com.spendrixa.app.ui.screens
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud

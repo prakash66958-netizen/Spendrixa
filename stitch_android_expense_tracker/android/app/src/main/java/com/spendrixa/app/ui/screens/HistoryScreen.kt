@@ -1,4 +1,4 @@
-package com.vault.lumina.ui.screens
+package com.spendrixa.app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
@@ -43,20 +43,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.vault.lumina.data.model.Transaction
-import com.vault.lumina.data.model.TransactionType
-import com.vault.lumina.data.repository.TransactionRepository
-import com.vault.lumina.ui.components.VaultBottomBar
-import com.vault.lumina.ui.theme.Background
-import com.vault.lumina.ui.theme.OnSurface
-import com.vault.lumina.ui.theme.OnSurfaceVariant
-import com.vault.lumina.ui.theme.Outline
-import com.vault.lumina.ui.theme.OutlineVariant
-import com.vault.lumina.ui.theme.Primary
-import com.vault.lumina.ui.theme.PrimaryFixed
-import com.vault.lumina.ui.theme.SurfaceContainerLow
-import com.vault.lumina.ui.theme.Tertiary
-import com.vault.lumina.ui.theme.OnTertiaryFixed
+import com.spendrixa.app.data.model.Transaction
+import com.spendrixa.app.data.model.TransactionType
+import com.spendrixa.app.data.repository.TransactionRepository
+import com.spendrixa.app.ui.components.SpendrixaBottomBar
+import com.spendrixa.app.ui.theme.Background
+import com.spendrixa.app.ui.theme.OnSurface
+import com.spendrixa.app.ui.theme.OnSurfaceVariant
+import com.spendrixa.app.ui.theme.Outline
+import com.spendrixa.app.ui.theme.OutlineVariant
+import com.spendrixa.app.ui.theme.Primary
+import com.spendrixa.app.ui.theme.PrimaryFixed
+import com.spendrixa.app.ui.theme.SurfaceContainerLow
+import com.spendrixa.app.ui.theme.Tertiary
+import com.spendrixa.app.ui.theme.OnTertiaryFixed
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -234,7 +234,7 @@ fun HistoryScreen(
                 )
             }
             Text(
-                text = "Vault",
+                text = "Spendrixa",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold,
                 color = OnSurface
@@ -248,7 +248,7 @@ fun HistoryScreen(
             }
         }
 
-        VaultBottomBar(
+        SpendrixaBottomBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             currentRoute = "history",
             onDashboardClick = onNavigateDashboard,
