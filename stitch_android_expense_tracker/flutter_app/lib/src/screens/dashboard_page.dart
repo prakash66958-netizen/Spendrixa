@@ -34,7 +34,7 @@ class DashboardPage extends StatelessWidget {
     final List<AppTransaction> recent = transactions.take(5).toList(growable: false);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
       children: <Widget>[
         Card(
           child: Padding(

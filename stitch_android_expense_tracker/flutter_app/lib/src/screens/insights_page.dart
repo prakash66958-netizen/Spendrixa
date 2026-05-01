@@ -39,7 +39,7 @@ class InsightsPage extends StatelessWidget {
     );
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
       children: <Widget>[
         Text(
           'A quick read on where your money is going.',

@@ -46,7 +46,7 @@ class _HistoryPageState extends State<HistoryPage> {
     }).toList(growable: false);
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[

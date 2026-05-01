@@ -62,7 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
     final ThemeData theme = Theme.of(context);
 
     return ListView(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 120),
+      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
       children: <Widget>[
         Text(
           'Manage your app settings and preferences.',
