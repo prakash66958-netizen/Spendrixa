@@ -43,6 +43,7 @@ body{font-family:'Inter',sans-serif}
         <a href="#" data-tab="transactions" class="nav-link flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">receipt_long</span>Transactions</a>
         <a href="#" data-tab="budgets" class="nav-link flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">account_balance_wallet</span>Budgets</a>
         <a href="#" data-tab="reports" class="nav-link flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">analytics</span>Reports</a>
+        <a href="#" onclick="toggleContactModal(true)" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">support_agent</span>Support</a>
     </nav>
     <div class="mt-auto px-2">
         <a href="#" id="sideLogout" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">logout</span>Logout</a>
@@ -220,6 +221,34 @@ body{font-family:'Inter',sans-serif}
         <div class="flex gap-3 justify-end">
             <button onclick="closeBudgetModal()" class="px-5 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
             <button onclick="saveBudget()" class="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">Save</button>
+        </div>
+    </div>
+</div>
+
+<!-- Contact Modal -->
+<div id="contactModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onclick="toggleContactModal(false)"></div>
+    <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+        <h2 class="text-2xl font-bold text-slate-900 mb-2">Contact Support</h2>
+        <p class="text-slate-500 mb-6">Need help? Send us a message and we'll get back to you.</p>
+
+        <form name="dashboard-contact" method="POST" data-netlify="true" id="contactForm" class="space-y-4">
+            <input type="hidden" name="form-name" value="dashboard-contact">
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Your Email</label>
+                <input type="email" name="email" id="contactEmail" required class="w-full p-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-600/20 outline-none">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-slate-700 mb-1">Message</label>
+                <textarea name="message" required rows="4" class="w-full p-3 rounded-lg border border-slate-200 focus:ring-2 focus:ring-blue-600/20 outline-none resize-none"></textarea>
+            </div>
+            <button type="submit" class="w-full py-3 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 active:scale-95 transition-all">Send Message</button>
+        </form>
+        <div id="contactSuccess" class="hidden text-center py-8">
+            <span class="material-symbols-outlined text-green-500 text-5xl mb-4">check_circle</span>
+            <p class="text-lg font-bold text-slate-900">Message Sent!</p>
+            <p class="text-slate-500">We've received your request.</p>
+            <button onclick="toggleContactModal(false)" class="mt-6 text-blue-600 font-semibold hover:underline">Close</button>
         </div>
     </div>
 </div>
@@ -443,6 +472,37 @@ async function saveTxn(){
 document.getElementById('editBudgetBtn').addEventListener('click',()=>{document.getElementById('budgetInput').value=Math.round(budget);document.getElementById('budgetModal').classList.remove('hidden');});
 function closeBudgetModal(){document.getElementById('budgetModal').classList.add('hidden');}
 async function saveBudget(){const v=parseFloat(document.getElementById('budgetInput').value);if(!v||v<=0||!currentUser)return;try{await db.collection('users').doc(currentUser.uid).set({monthlyBudget:v},{merge:true});closeBudgetModal();}catch(e){console.error(e);}}
+
+// ── CONTACT MODAL ──
+function toggleContactModal(show) {
+    const modal = document.getElementById('contactModal');
+    modal.classList.toggle('hidden', !show);
+    if (!show) {
+        document.getElementById('contactForm').classList.remove('hidden');
+        document.getElementById('contactSuccess').classList.add('hidden');
+    } else {
+        if (currentUser && currentUser.email) {
+            document.getElementById('contactEmail').value = currentUser.email;
+        }
+    }
+}
+
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+
+    fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(formData).toString(),
+    })
+    .then(() => {
+        form.classList.add('hidden');
+        document.getElementById('contactSuccess').classList.remove('hidden');
+    })
+    .catch((error) => alert(error));
+});
 
 // ── EXPORT ──
 function exportToCSV() {
