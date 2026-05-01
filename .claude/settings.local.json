@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(start chrome *)",
+      "WebFetch(domain:stitch.withgoogle.com)",
+      "WebSearch",
+      "Bash(flutter analyze *)",
+      "Bash(where flutter *)",
+      "Bash(where.exe flutter *)",
+      "Bash(cmd /c \"where flutter\")",
+      "Bash(cmd /c \"flutter analyze\")",
+      "Read(//c/src/flutter/bin/**)",
+      "Read(//c/Users/praka/flutter/bin/**)",
+      "Read(//c/flutter/bin/**)",
+      "Read(//c/Users/praka/development/flutter/bin/**)",
+      "Read(//c/Program Files/flutter/bin/**)",
+      "Bash(export PATH=\"/c/src/flutter/bin:$PATH\")",
+      "Bash(flutter --version)",
+      "WebFetch(domain:pub.dev)",
+      "Bash(flutter pub *)",
+      "Bash(flutter build *)",
+      "Bash(adb devices *)",
+      "Bash(%LOCALAPPDATA%\\\\\\\\Android\\\\\\\\Sdk\\\\\\\\platform-tools\\\\\\\\adb.exe devices *)",
+      "Bash(dart run *)",
+      "Bash(cp *)",
+      "Bash(cp \"weblanding page/code.html\" stitch_android_expense_tracker/web/index.html)",
+      "Bash(cp \"weblanding page/screen.png\" stitch_android_expense_tracker/web/)",
+      "Bash(cp \"weblanding page/DESIGN.md\" stitch_android_expense_tracker/web/)",
+      "Bash(unzip *)",
+      "Bash(/c/src/flutter/bin/flutter.bat clean *)",
+      "Bash(/c/src/flutter/bin/flutter.bat build *)",
+      "Bash(git init *)",
+      "Bash(git add *)",
+      "Bash(git branch *)",
+      "Bash(git remote *)"
+    ]
+  }
+}

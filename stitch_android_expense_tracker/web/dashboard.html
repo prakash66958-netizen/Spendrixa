@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Spendrixa - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config={theme:{extend:{
+colors:{"primary":"#000000","on-primary":"#ffffff","primary-container":"#131b2e","on-primary-container":"#7c839b","secondary":"#006c49","on-secondary":"#ffffff","secondary-container":"#6cf8bb","on-secondary-container":"#00714d","tertiary-container":"#001a42","on-tertiary-container":"#3980f4","error":"#ba1a1a","on-error":"#ffffff","error-container":"#ffdad6","on-error-container":"#93000a","surface":"#f8f9ff","surface-container":"#e5eeff","surface-container-low":"#eff4ff","surface-container-high":"#dce9ff","surface-container-highest":"#d3e4fe","on-surface":"#0b1c30","on-surface-variant":"#45464d","outline":"#76777d","outline-variant":"#c6c6cd","inverse-surface":"#213145","inverse-on-surface":"#eaf1ff"},
+fontFamily:{sans:["Inter"]},
+fontSize:{"display":["48px",{lineHeight:"1.1",letterSpacing:"-0.02em",fontWeight:"700"}],"h1":["32px",{lineHeight:"1.25",letterSpacing:"-0.01em",fontWeight:"600"}],"h2":["24px",{lineHeight:"1.3",fontWeight:"600"}],"h3":["20px",{lineHeight:"1.4",fontWeight:"600"}],"body-sm":["14px",{lineHeight:"1.5",fontWeight:"400"}],"label-md":["12px",{lineHeight:"1.2",letterSpacing:"0.02em",fontWeight:"500"}]},
+spacing:{gutter:"24px"},
+}}}
+</script>
+<style>
+body{font-family:'Inter',sans-serif}
+.material-symbols-outlined{font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24}
+.page{display:none}.page.active{display:block}
+.nav-link.active{background:#2563eb;color:#fff}
+.nav-link.active .material-symbols-outlined{font-variation-settings:'FILL' 1}
+.mob-link.active{color:#2563eb}.mob-link.active .material-symbols-outlined{font-variation-settings:'FILL' 1}
+.fade{animation:fadeIn .2s ease}@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#e5eeff;border-radius:10px}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+</head>
+<body class="bg-surface text-on-surface">
+
+<!-- SIDEBAR (desktop) -->
+<aside id="sidebar" class="fixed left-0 top-0 bottom-0 flex-col py-6 bg-slate-900 h-screen w-64 border-r border-slate-800 shadow-xl z-40 hidden md:flex">
+        <div class="px-6 mb-8 flex items-center gap-3">
+            <img src="screen.png" alt="Spendrixa Logo" class="h-8 w-8 rounded-lg object-cover">
+            <div><h1 class="text-lg font-black text-white leading-tight">Spendrixa</h1><p class="text-[10px] uppercase tracking-widest text-slate-400 font-bold">Financial Intelligence</p></div>
+        </div>
+    <nav id="sideNav" class="flex-1 space-y-1">
+        <a href="#" data-tab="dashboard" class="nav-link active flex items-center gap-3 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
+        <a href="#" data-tab="transactions" class="nav-link flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">receipt_long</span>Transactions</a>
+        <a href="#" data-tab="budgets" class="nav-link flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">account_balance_wallet</span>Budgets</a>
+        <a href="#" data-tab="reports" class="nav-link flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">analytics</span>Reports</a>
+    </nav>
+    <div class="mt-auto px-2">
+        <a href="#" id="sideLogout" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">logout</span>Logout</a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="md:ml-64 min-h-screen flex flex-col">
+
+<!-- TOP BAR -->
+<header class="sticky top-0 z-30 flex items-center justify-between px-4 md:px-6 h-14 bg-white/80 backdrop-blur-md border-b border-slate-200 shadow-sm text-sm font-medium">
+    <div class="flex items-center gap-3 md:hidden">
+        <img src="screen.png" alt="Spendrixa Logo" class="h-6 w-6 rounded-md object-cover">
+        <span class="font-black text-sm">Spendrixa</span>
+    </div>
+    <div class="hidden md:flex items-center gap-4 flex-1">
+        <div class="relative w-full max-w-xs">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+            <input id="globalSearch" type="text" placeholder="Search..." class="w-full pl-9 pr-4 py-1.5 bg-slate-50 border-none rounded-full text-sm focus:ring-2 focus:ring-blue-600/20"/>
+        </div>
+    </div>
+    <div class="flex items-center gap-2">
+        <!-- Currency Selector -->
+        <select id="currencySelect" class="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold focus:ring-blue-600/20 focus:border-blue-600 cursor-pointer">
+            <option value="USD">$ USD</option>
+            <option value="EUR">€ EUR</option>
+            <option value="GBP">£ GBP</option>
+            <option value="INR">₹ INR</option>
+            <option value="JPY">¥ JPY</option>
+            <option value="AUD">A$ AUD</option>
+            <option value="CAD">C$ CAD</option>
+        </select>
+        <button id="addTxnTopBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg flex items-center gap-1.5 text-xs font-semibold transition-all active:scale-95 hidden md:flex">
+            <span class="material-symbols-outlined text-sm">add</span>Add Transaction
+        </button>
+        <button id="topLogout" class="p-1.5 text-slate-500 hover:bg-slate-100 rounded-full transition-colors md:hidden"><span class="material-symbols-outlined text-xl">logout</span></button>
+        <span id="userEmail" class="text-xs text-slate-400 hidden lg:inline truncate max-w-[120px]"></span>
+    </div>
+</header>
+
+<!-- CONTENT -->
+<div class="p-4 md:p-gutter max-w-[1440px] mx-auto w-full flex-1">
+
+<!-- ========== DASHBOARD ========== -->
+<div id="page-dashboard" class="page active fade">
+    <section id="summaryCards" class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-gutter mb-6">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-[0px_2px_4px_rgba(15,23,42,0.04)] relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-500"></div>
+            <div class="relative z-10">
+                <div class="flex items-center justify-between mb-3"><span class="text-on-surface-variant text-label-md uppercase tracking-wider">Monthly Budget</span><span class="material-symbols-outlined text-blue-600 bg-blue-50 p-2 rounded-lg text-xl">account_balance</span></div>
+                <span id="dBudget" class="text-display text-on-surface tracking-tighter block">--</span>
+                <button id="editBudgetBtn" class="flex items-center gap-1 mt-2 text-blue-600 text-xs font-semibold hover:underline"><span class="material-symbols-outlined text-sm">edit</span>Edit</button>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-[0px_2px_4px_rgba(15,23,42,0.04)]">
+            <div class="flex items-center justify-between mb-3"><span class="text-on-surface-variant text-label-md uppercase tracking-wider">Monthly Spending</span><span class="material-symbols-outlined text-error bg-error-container/30 p-2 rounded-lg text-xl">shopping_cart</span></div>
+            <span id="dExpense" class="text-display text-on-surface tracking-tighter block">--</span>
+            <div class="mt-3 h-1 w-full bg-slate-100 rounded-full overflow-hidden"><div id="dBar" class="h-full bg-error transition-all duration-700" style="width:0%"></div></div>
+            <p id="dBarLabel" class="text-[11px] text-on-surface-variant mt-1.5">0% of budget</p>
+        </div>
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-[0px_2px_4px_rgba(15,23,42,0.04)]">
+            <div class="flex items-center justify-between mb-3"><span class="text-on-surface-variant text-label-md uppercase tracking-wider">Monthly Income</span><span class="material-symbols-outlined text-on-secondary-container bg-secondary-container/20 p-2 rounded-lg text-xl">payments</span></div>
+            <span id="dIncome" class="text-display text-on-surface tracking-tighter block">--</span>
+            <div class="flex items-center gap-1 mt-2 text-on-secondary-container"><span class="material-symbols-outlined text-sm">check_circle</span><span class="text-body-sm font-semibold" id="dIncLabel">--</span></div>
+        </div>
+    </section>
+    <!-- Recent Transactions Table -->
+    <section class="bg-white rounded-xl border border-slate-200 shadow-[0px_2px_4px_rgba(15,23,42,0.04)] overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex items-center justify-between">
+            <div><h3 class="text-h3">Recent Transactions</h3><p class="text-body-sm text-on-surface-variant">Latest 10 entries</p></div>
+            <button onclick="switchTab('transactions')" class="text-blue-600 text-sm font-semibold hover:underline">View All</button>
+        </div>
+        <div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 text-label-md text-on-surface-variant uppercase tracking-wider"><tr><th class="px-5 py-3">Date</th><th class="px-5 py-3">Description</th><th class="px-5 py-3">Category</th><th class="px-5 py-3 text-right">Amount</th><th class="px-5 py-3 text-center">Status</th></tr></thead><tbody id="recentTbody" class="divide-y divide-slate-100"><tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">Loading...</td></tr></tbody></table></div>
+    </section>
+</div>
+
+<!-- ========== TRANSACTIONS ========== -->
+<div id="page-transactions" class="page fade">
+    <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div><h2 class="text-h1">Transactions</h2><p class="text-on-surface-variant mt-1">Manage and track all financial activities.</p></div>
+    </div>
+    <div class="flex gap-3 mb-5 overflow-x-auto pb-1">
+        <button data-filter="All" class="txn-chip px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-primary text-on-primary">All</button>
+        <button data-filter="Expenses" class="txn-chip px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">Expenses</button>
+        <button data-filter="Income" class="txn-chip px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">Income</button>
+        <button data-filter="Subscriptions" class="txn-chip px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">Subscriptions</button>
+    </div>
+    <div class="relative mb-5"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span><input id="txnSearch" type="text" placeholder="Search transactions..." class="w-full md:max-w-md pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-600/20"/></div>
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto"><table class="w-full text-left"><thead class="bg-slate-50 border-b border-slate-200"><tr><th class="py-3 px-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Date</th><th class="py-3 px-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Description</th><th class="py-3 px-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider">Category</th><th class="py-3 px-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-right">Amount</th><th class="py-3 px-5 text-[11px] font-bold text-slate-500 uppercase tracking-wider text-center">Status</th></tr></thead><tbody id="allTbody" class="divide-y divide-slate-100"><tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">Loading...</td></tr></tbody></table></div>
+    </div>
+</div>
+
+<!-- ========== BUDGETS ========== -->
+<div id="page-budgets" class="page fade">
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+        <div><h2 class="text-h1">Budget Management</h2><p class="text-on-surface-variant mt-1">Track spending across categories.</p></div>
+    </div>
+    <div id="budgetStats" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"></div>
+    <div id="budgetGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+</div>
+
+<!-- ========== REPORTS ========== -->
+<div id="page-reports" class="page fade">
+    <div class="mb-6"><h2 class="text-h1">Reports & Analytics</h2><p class="text-on-surface-variant mt-1">Insights into your financial health.</p></div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><p class="text-label-md text-on-surface-variant uppercase mb-1">Avg Expense</p><p id="rAvg" class="text-h2 font-bold">--</p></div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><p class="text-label-md text-on-surface-variant uppercase mb-1">Net Cashflow</p><p id="rNet" class="text-h2 font-bold">--</p></div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><p class="text-label-md text-on-surface-variant uppercase mb-1">Total Income</p><p id="rInc" class="text-h2 font-bold text-on-secondary-container">--</p></div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><p class="text-label-md text-on-surface-variant uppercase mb-1">Total Expenses</p><p id="rExp" class="text-h2 font-bold text-error">--</p></div>
+    </div>
+    <!-- Smart Insight -->
+    <div id="insightCard" class="bg-on-tertiary-container rounded-2xl p-6 mb-6 text-white relative overflow-hidden">
+        <div class="absolute top-[-20%] right-[-10%] w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div class="relative flex items-start gap-3">
+            <div class="p-2 bg-white/20 rounded-xl"><span class="material-symbols-outlined text-white" style="font-variation-settings:'FILL' 1;">auto_awesome</span></div>
+            <div><h4 class="font-bold mb-1">Smart Insight</h4><p id="rInsight" class="text-white/80 text-sm leading-relaxed">Add transactions to unlock insights.</p></div>
+        </div>
+    </div>
+    <!-- Top Categories -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 mb-6">
+        <h3 class="text-h3 mb-5">Top Spending Categories</h3>
+        <div id="rCategories" class="space-y-5"><p class="text-sm text-slate-400">No data yet.</p></div>
+    </div>
+    <!-- Monthly Trend -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div class="flex justify-between items-end mb-5"><div><h3 class="text-h3">Monthly Trend</h3><p class="text-body-sm text-on-surface-variant">Last 6 months</p></div><div class="flex gap-3"><span class="flex items-center gap-1 text-[11px]"><span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>Income</span><span class="flex items-center gap-1 text-[11px]"><span class="w-2.5 h-2.5 rounded-full bg-error"></span>Expense</span></div></div>
+        <div id="rTrend" class="space-y-4"></div>
+    </div>
+</div>
+
+</div><!-- /content -->
+
+<!-- MOBILE BOTTOM NAV -->
+<nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 h-14 flex items-center justify-around px-4 z-40">
+    <a href="#" data-tab="dashboard" class="mob-link active flex flex-col items-center text-xs"><span class="material-symbols-outlined text-xl">dashboard</span>Home</a>
+    <a href="#" data-tab="transactions" class="mob-link flex flex-col items-center text-slate-400 text-xs"><span class="material-symbols-outlined text-xl">receipt_long</span>History</a>
+    <a href="#" data-tab="budgets" class="mob-link flex flex-col items-center text-slate-400 text-xs"><span class="material-symbols-outlined text-xl">account_balance_wallet</span>Budget</a>
+    <a href="#" data-tab="reports" class="mob-link flex flex-col items-center text-slate-400 text-xs"><span class="material-symbols-outlined text-xl">analytics</span>Stats</a>
+</nav>
+
+<!-- FAB -->
+<button id="fabAdd" class="fixed bottom-20 md:bottom-8 right-4 md:right-8 w-14 h-14 bg-primary text-on-primary rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all z-50"><span class="material-symbols-outlined text-3xl">add</span></button>
+
+</main>
+
+<!-- ========== ADD TRANSACTION MODAL ========== -->
+<div id="addModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 w-[95%] max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto" id="modalBox">
+        <div class="flex items-center justify-between mb-5"><h2 class="text-h2">Add Transaction</h2><button onclick="closeModal()" class="p-1 hover:bg-slate-100 rounded-full"><span class="material-symbols-outlined">close</span></button></div>
+        <div class="flex bg-slate-100 p-1 rounded-lg mb-5">
+            <button id="mTypeExp" onclick="setType('EXPENSE')" class="flex-1 py-2 rounded-md text-sm font-semibold bg-white shadow-sm text-primary transition-all">Expense</button>
+            <button id="mTypeInc" onclick="setType('INCOME')" class="flex-1 py-2 rounded-md text-sm font-semibold text-on-surface-variant transition-all">Income</button>
+        </div>
+        <div class="space-y-4">
+            <div><label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Amount</label><div class="flex items-center gap-2"><span id="mCurrSymbol" class="text-2xl font-bold text-slate-300">$</span><input id="mAmount" type="number" step="0.01" min="0.01" placeholder="0.00" class="flex-1 h-12 text-2xl font-bold bg-slate-50 border border-slate-200 rounded-lg px-3 focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600"/></div></div>
+            <div><label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Category</label><select id="mCategory" class="w-full h-10 bg-slate-50 border border-slate-200 rounded-lg px-3 text-sm focus:ring-2 focus:ring-blue-600/20"></select></div>
+            <div><label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Merchant / Source</label><input id="mMerchant" type="text" placeholder="e.g. Amazon, Salary..." class="w-full h-10 bg-slate-50 border border-slate-200 rounded-lg px-3 text-sm focus:ring-2 focus:ring-blue-600/20"/></div>
+            <div><label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1">Note</label><textarea id="mNote" rows="2" placeholder="Optional..." class="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-600/20 resize-none"></textarea></div>
+        </div>
+        <button id="mSaveBtn" onclick="saveTxn()" class="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm mt-5 flex items-center justify-center gap-2 active:scale-[0.98] transition-all disabled:opacity-40"><span id="mSaveText">Save Transaction</span><span id="mSaveLoader" class="hidden w-4 h-4 border-2 border-transparent border-t-current rounded-full animate-spin"></span></button>
+    </div>
+</div>
+
+<!-- BUDGET EDIT MODAL -->
+<div id="budgetModal" class="fixed inset-0 z-[100] hidden">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" onclick="closeBudgetModal()"></div>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 w-[90%] max-w-sm shadow-2xl">
+        <h3 class="text-h3 mb-4">Update Monthly Budget</h3>
+        <div class="flex items-center gap-2 mb-5"><span id="bCurrSymbol" class="text-2xl font-bold text-slate-300">$</span><input id="budgetInput" type="number" step="100" min="0" class="flex-1 h-12 text-2xl font-bold bg-slate-50 border border-slate-200 rounded-lg px-3 focus:ring-2 focus:ring-blue-600/20"/></div>
+        <div class="flex gap-3 justify-end">
+            <button onclick="closeBudgetModal()" class="px-5 py-2 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-100">Cancel</button>
+            <button onclick="saveBudget()" class="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+// ── CONFIG ──
+const CURRENCIES = {USD:{symbol:'$',locale:'en-US'},EUR:{symbol:'€',locale:'de-DE'},GBP:{symbol:'£',locale:'en-GB'},INR:{symbol:'₹',locale:'en-IN'},JPY:{symbol:'¥',locale:'ja-JP'},AUD:{symbol:'A$',locale:'en-AU'},CAD:{symbol:'C$',locale:'en-CA'}};
+const CATS = ['FOOD','TRANSPORT','SHOPPING','GAMING','GYM','ENTERTAINMENT','TECHNOLOGY','HEALTH','TRAVEL','SUBSCRIPTION','HOUSING','OTHER'];
+const CAT_ICONS = {FOOD:'restaurant',TRANSPORT:'directions_car',SHOPPING:'shopping_bag',GAMING:'sports_esports',GYM:'fitness_center',ENTERTAINMENT:'movie',TECHNOLOGY:'cloud',HEALTH:'local_hospital',TRAVEL:'flight',SUBSCRIPTION:'subscriptions',HOUSING:'home',INCOME:'account_balance',OTHER:'receipt'};
+const CAT_COLORS = {FOOD:['#fffbeb','#d97706'],TRANSPORT:['#eff6ff','#2563eb'],SHOPPING:['#faf5ff','#9333ea'],GAMING:['#eef2ff','#4f46e5'],GYM:['#ecfdf5','#059669'],ENTERTAINMENT:['#fff7ed','#ea580c'],TECHNOLOGY:['#ecfeff','#0891b2'],HEALTH:['#fff1f2','#e11d48'],TRAVEL:['#f0f9ff','#0284c7'],SUBSCRIPTION:['#f5f3ff','#7c3aed'],HOUSING:['#f8fafc','#475569'],INCOME:['#ecfdf5','#059669'],OTHER:['#f8fafc','#475569']};
+const STATUS_COLORS = {red:['#fef2f2','#dc2626','#ef4444'],amber:['#fffbeb','#d97706','#f59e0b'],emerald:['#ecfdf5','#059669','#10b981']};
+
+let currentUser=null, allTxns=[], budget=0, detachT=null, detachP=null;
+let currency=localStorage.getItem('wm_currency')||'USD';
+let currentTab='dashboard', txnFilter='All', txnType='EXPENSE';
+
+function fmtMoney(n){const c=CURRENCIES[currency]||CURRENCIES.USD;return new Intl.NumberFormat(c.locale,{style:'currency',currency:currency,minimumFractionDigits:currency==='JPY'?0:2}).format(n);}
+function sym(){return (CURRENCIES[currency]||CURRENCIES.USD).symbol;}
+const dateFmt=new Intl.DateTimeFormat('en-US',{month:'short',day:'numeric',year:'numeric'});
+const timeFmt=new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'numeric'});
+const monthFmt=new Intl.DateTimeFormat('en-US',{month:'short'});
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function parseDate(v){if(v&&typeof v.toDate==='function')return v.toDate();if(typeof v==='number')return new Date(v);return v instanceof Date?v:new Date();}
+function prettify(s){return(s||'OTHER').charAt(0).toUpperCase()+(s||'OTHER').slice(1).toLowerCase();}
+
+// ── CURRENCY ──
+document.getElementById('currencySelect').value=currency;
+document.getElementById('currencySelect').addEventListener('change',e=>{
+    currency=e.target.value;localStorage.setItem('wm_currency',currency);
+    if(currentUser)db.collection('users').doc(currentUser.uid).set({currency},{merge:true});
+    renderAll();updateModalSymbols();
+});
+function updateModalSymbols(){document.getElementById('mCurrSymbol').textContent=sym();document.getElementById('bCurrSymbol').textContent=sym();}
+updateModalSymbols();
+
+// ── AUTH ──
+auth.onAuthStateChanged(user=>{
+    if(!user){cleanup();window.location.href='index.html';return;}
+    currentUser=user;document.getElementById('userEmail').textContent=user.email||'';
+    loadData(user);
+});
+document.getElementById('sideLogout').addEventListener('click',e=>{e.preventDefault();cleanup();auth.signOut();});
+document.getElementById('topLogout').addEventListener('click',()=>{cleanup();auth.signOut();});
+function cleanup(){if(detachT){detachT();detachT=null;}if(detachP){detachP();detachP=null;}}
+
+// ── DATA ──
+function loadData(user){
+    cleanup();
+    detachT=db.collection('users').doc(user.uid).collection('transactions').orderBy('date','desc')
+        .onSnapshot(s=>{allTxns=s.docs.map(d=>({id:d.id,...d.data()}));renderAll();},err=>console.error(err));
+    detachP=db.collection('users').doc(user.uid).onSnapshot(s=>{
+        if(s.exists){
+            const d=s.data();
+            if(typeof d.monthlyBudget==='number')budget=d.monthlyBudget;
+            if(d.currency&&CURRENCIES[d.currency]){currency=d.currency;localStorage.setItem('wm_currency',currency);document.getElementById('currencySelect').value=currency;updateModalSymbols();}
+        }
+        renderAll();
+    },err=>console.error(err));
+}
+
+// ── NAV ──
+function switchTab(t){
+    currentTab=t;
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('page-'+t).classList.add('active');
+    document.querySelectorAll('.nav-link').forEach(a=>{a.classList.toggle('active',a.dataset.tab===t);if(a.dataset.tab!==t){a.classList.add('text-slate-400');a.classList.remove('text-white');}else{a.classList.remove('text-slate-400');}});
+    document.querySelectorAll('.mob-link').forEach(a=>{a.classList.toggle('active',a.dataset.tab===t);if(a.dataset.tab!==t)a.classList.add('text-slate-400');else a.classList.remove('text-slate-400');});
+    renderAll();
+}
+document.querySelectorAll('[data-tab]').forEach(el=>el.addEventListener('click',e=>{e.preventDefault();switchTab(el.dataset.tab);}));
+
+// ── RENDER ──
+function renderAll(){renderDashboard();if(currentTab==='transactions')renderTransactions();if(currentTab==='budgets')renderBudgets();if(currentTab==='reports')renderReports();}
+
+function renderDashboard(){
+    const inc=allTxns.filter(t=>t.type==='INCOME').reduce((s,t)=>s+(t.amount||0),0);
+    const exp=allTxns.filter(t=>t.type==='EXPENSE').reduce((s,t)=>s+(t.amount||0),0);
+    const pct=budget>0?Math.min(100,Math.round((exp/budget)*100)):0;
+    document.getElementById('dBudget').textContent=fmtMoney(budget);
+    document.getElementById('dExpense').textContent=fmtMoney(exp);
+    document.getElementById('dIncome').textContent=fmtMoney(inc);
+    document.getElementById('dBar').style.width=pct+'%';
+    document.getElementById('dBarLabel').textContent=pct+'% of budget utilized';
+    document.getElementById('dIncLabel').textContent=inc>0?'Recorded this period':'No income yet';
+    document.getElementById('recentTbody').innerHTML=allTxns.length?allTxns.slice(0,10).map(txnRow).join(''):'<tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">No transactions yet.</td></tr>';
+}
+
+function txnRow(t){
+    const isInc=t.type==='INCOME';const d=parseDate(t.date);const icon=CAT_ICONS[t.category]||'receipt';const cc=CAT_COLORS[t.category]||CAT_COLORS.OTHER;
+    return `<tr class="hover:bg-slate-50/50 transition-colors"><td class="px-5 py-3 text-sm text-slate-600">${esc(dateFmt.format(d))}</td><td class="px-5 py-3"><div class="flex items-center gap-3"><div class="w-7 h-7 rounded-full bg-slate-100 flex items-center justify-center"><span class="material-symbols-outlined text-sm">${icon}</span></div><div><p class="font-semibold text-sm">${esc(t.merchant||prettify(t.category))}</p><p class="text-[11px] text-slate-400">${esc(t.note||'')}</p></div></div></td><td class="px-5 py-3"><span class="px-2 py-0.5 text-[11px] font-bold rounded-full uppercase" style="background:${cc[0]};color:${cc[1]}">${esc(prettify(t.category))}</span></td><td class="px-5 py-3 text-right font-bold text-sm ${isInc?'text-on-secondary-container':'text-on-surface'}">${isInc?'+':'−'}${fmtMoney(t.amount||0)}</td><td class="px-5 py-3 text-center"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium ${t.isVerified?'bg-emerald-100 text-emerald-800':'bg-slate-100 text-slate-600'}"><span class="w-1.5 h-1.5 rounded-full ${t.isVerified?'bg-emerald-500':'bg-slate-400'}"></span>${t.isVerified?'Verified':'Done'}</span></td></tr>`;
+}
+
+function renderTransactions(){
+    const q=(document.getElementById('txnSearch').value||'').trim().toLowerCase();
+    const f=allTxns.filter(t=>{
+        const mq=!q||(t.merchant||'').toLowerCase().includes(q)||(t.category||'').toLowerCase().includes(q)||(t.note||'').toLowerCase().includes(q);
+        const mf=txnFilter==='All'||(txnFilter==='Expenses'&&t.type==='EXPENSE')||(txnFilter==='Income'&&t.type==='INCOME')||(txnFilter==='Subscriptions'&&t.category==='SUBSCRIPTION');
+        return mq&&mf;
+    });
+    document.getElementById('allTbody').innerHTML=f.length?f.map(txnRow).join(''):'<tr><td colspan="5" class="px-5 py-8 text-center text-slate-400">No matches.</td></tr>';
+}
+document.getElementById('txnSearch').addEventListener('input',()=>{if(currentTab==='transactions')renderTransactions();});
+document.querySelectorAll('.txn-chip').forEach(btn=>btn.addEventListener('click',()=>{
+    txnFilter=btn.dataset.filter;
+    document.querySelectorAll('.txn-chip').forEach(c=>{c.className=c.dataset.filter===txnFilter?'txn-chip px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-primary text-on-primary':'txn-chip px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-white border border-slate-200 text-slate-600 hover:bg-slate-50';});
+    renderTransactions();
+}));
+
+function renderBudgets(){
+    const exp=allTxns.filter(t=>t.type==='EXPENSE');const totalExp=exp.reduce((s,t)=>s+(t.amount||0),0);
+    const remaining=budget-totalExp;const pct=budget>0?Math.min(100,Math.round((totalExp/budget)*100)):0;
+    const cats={};exp.forEach(t=>{cats[t.category]=(cats[t.category]||0)+(t.amount||0);});
+    const topCat=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+
+    document.getElementById('budgetStats').innerHTML=`
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><p class="text-label-md text-on-surface-variant uppercase mb-1">Total Budget</p><p class="text-h2 font-bold">${fmtMoney(budget)}</p></div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><p class="text-label-md text-on-surface-variant uppercase mb-1">Spent</p><p class="text-h2 font-bold text-blue-600">${fmtMoney(totalExp)}</p><div class="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-600" style="width:${pct}%"></div></div></div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><p class="text-label-md text-on-surface-variant uppercase mb-1">Remaining</p><p class="text-h2 font-bold">${fmtMoney(remaining)}</p></div>
+        <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm"><p class="text-label-md text-on-surface-variant uppercase mb-1">Top Category</p><p class="text-h2 font-bold">${topCat.length?prettify(topCat[0][0]):'--'}</p>${topCat.length?`<p class="text-xs font-medium ${topCat[0][1]/budget>.8?'text-red-500':'text-emerald-600'} mt-1">${Math.round((topCat[0][1]/budget)*100)}% of budget</p>`:''}</div>`;
+
+    document.getElementById('budgetGrid').innerHTML=CATS.map(cat=>{
+        const spent=cats[cat]||0;const catPct=budget>0?Math.round((spent/budget)*100):0;
+        const status=catPct>=90?'Critical':catPct>=70?'Warning':'On Track';
+        const sc=catPct>=90?'red':catPct>=70?'amber':'emerald';
+        const cc=CAT_COLORS[cat]||CAT_COLORS.OTHER;const stc=STATUS_COLORS[sc];
+        return `<div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div class="flex items-center gap-3 mb-4"><div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background:${cc[0]};color:${cc[1]}"><span class="material-symbols-outlined">${CAT_ICONS[cat]}</span></div><div><h3 class="font-semibold text-sm">${prettify(cat)}</h3></div></div>
+            <div class="flex justify-between items-end mb-3"><div><p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Spent</p><p class="text-lg font-bold">${fmtMoney(spent)}</p></div></div>
+            <div class="flex items-center justify-between mb-1.5"><span class="text-[11px] font-bold px-2 py-0.5 rounded-full" style="background:${stc[0]};color:${stc[1]}">${status}</span><span class="text-[11px] font-semibold" style="color:${stc[1]}">${catPct}%</span></div>
+            <div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full transition-all" style="width:${Math.min(100,catPct)}%;background:${stc[2]}"></div></div>
+        </div>`;
+    }).join('');
+}
+
+function renderReports(){
+    const exps=allTxns.filter(t=>t.type==='EXPENSE');const incs=allTxns.filter(t=>t.type==='INCOME');
+    const totalExp=exps.reduce((s,t)=>s+(t.amount||0),0);const totalInc=incs.reduce((s,t)=>s+(t.amount||0),0);
+    const avgExp=exps.length?totalExp/exps.length:0;
+    document.getElementById('rAvg').textContent=fmtMoney(avgExp);
+    document.getElementById('rNet').textContent=fmtMoney(totalInc-totalExp);
+    document.getElementById('rNet').className='text-h2 font-bold '+(totalInc>=totalExp?'text-on-secondary-container':'text-error');
+    document.getElementById('rInc').textContent=fmtMoney(totalInc);
+    document.getElementById('rExp').textContent=fmtMoney(totalExp);
+
+    const cats={};exps.forEach(t=>{cats[t.category]=(cats[t.category]||0)+(t.amount||0);});
+    const sorted=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+    let insight='Add transactions to unlock deeper financial insights.';
+    if(totalExp>0&&totalInc<totalExp)insight='Spending exceeds recorded income. Review your recent expenses.';
+    else if(sorted.length){const p=Math.round((sorted[0][1]/totalExp)*100);insight=prettify(sorted[0][0])+' is your largest expense category at '+p+'% of total spending.';}
+    document.getElementById('rInsight').textContent=insight;
+
+    document.getElementById('rCategories').innerHTML=sorted.length?sorted.slice(0,5).map(([cat,amt])=>{
+        const r=totalExp>0?Math.round((amt/totalExp)*100):0;
+        return `<div><div class="flex items-center justify-between mb-2"><div class="flex items-center gap-3"><div class="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center"><span class="material-symbols-outlined text-on-tertiary-container text-sm">${CAT_ICONS[cat]||'receipt'}</span></div><div><p class="font-medium text-sm">${prettify(cat)}</p></div></div><div class="text-right"><p class="font-bold text-sm">${fmtMoney(amt)}</p><p class="text-label-md text-on-secondary-container">${r}%</p></div></div><div class="h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="bg-on-tertiary-container h-full transition-all" style="width:${r}%"></div></div></div>`;
+    }).join(''):'<p class="text-sm text-slate-400">No data yet.</p>';
+
+    const now=new Date();let maxV=1;const months=[];
+    for(let i=5;i>=0;i--){
+        const st=new Date(now.getFullYear(),now.getMonth()-i,1);const en=new Date(st.getFullYear(),st.getMonth()+1,1);
+        const mt=allTxns.filter(t=>{const d=parseDate(t.date);return d>=st&&d<en;});
+        const mI=mt.filter(t=>t.type==='INCOME').reduce((s,t)=>s+(t.amount||0),0);
+        const mE=mt.filter(t=>t.type==='EXPENSE').reduce((s,t)=>s+(t.amount||0),0);
+        maxV=Math.max(maxV,mI,mE);months.push({label:monthFmt.format(st),income:mI,expense:mE});
+    }
+    document.getElementById('rTrend').innerHTML=months.map(m=>{
+        const iW=Math.max(2,Math.round((m.income/maxV)*100));const eW=Math.max(2,Math.round((m.expense/maxV)*100));
+        return `<div><div class="flex justify-between items-center mb-1.5"><span class="text-sm font-semibold">${m.label}</span><span class="text-[11px] text-on-surface-variant">${fmtMoney(m.income)} / ${fmtMoney(m.expense)}</span></div><div class="space-y-1"><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-blue-600 rounded-full" style="width:${iW}%"></div></div><div class="h-2 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-error rounded-full" style="width:${eW}%"></div></div></div></div>`;
+    }).join('');
+}
+
+// ── ADD TRANSACTION ──
+document.getElementById('fabAdd').addEventListener('click',openModal);
+document.getElementById('addTxnTopBtn').addEventListener('click',openModal);
+function openModal(){txnType='EXPENSE';document.getElementById('mAmount').value='';document.getElementById('mMerchant').value='';document.getElementById('mNote').value='';updateTypeUI();populateCats();document.getElementById('addModal').classList.remove('hidden');}
+function closeModal(){document.getElementById('addModal').classList.add('hidden');}
+function setType(t){txnType=t;updateTypeUI();populateCats();}
+function updateTypeUI(){const e=document.getElementById('mTypeExp'),i=document.getElementById('mTypeInc');if(txnType==='EXPENSE'){e.className='flex-1 py-2 rounded-md text-sm font-semibold bg-white shadow-sm text-primary transition-all';i.className='flex-1 py-2 rounded-md text-sm font-semibold text-on-surface-variant transition-all';}else{i.className='flex-1 py-2 rounded-md text-sm font-semibold bg-white shadow-sm text-on-secondary-container transition-all';e.className='flex-1 py-2 rounded-md text-sm font-semibold text-on-surface-variant transition-all';}}
+function populateCats(){const sel=document.getElementById('mCategory');const cats=txnType==='INCOME'?['INCOME']:CATS;sel.innerHTML=cats.map(c=>`<option value="${c}">${prettify(c)}</option>`).join('');}
+async function saveTxn(){
+    const amt=parseFloat(document.getElementById('mAmount').value);if(!amt||amt<=0){document.getElementById('mAmount').focus();return;}
+    if(!currentUser)return;const btn=document.getElementById('mSaveBtn');btn.disabled=true;document.getElementById('mSaveText').textContent='Saving...';document.getElementById('mSaveLoader').classList.remove('hidden');
+    try{
+        await db.collection('users').doc(currentUser.uid).collection('transactions').add({amount:amt,category:txnType==='INCOME'?'INCOME':document.getElementById('mCategory').value,type:txnType,merchant:document.getElementById('mMerchant').value.trim(),note:document.getElementById('mNote').value.trim(),date:Date.now(),paymentMethod:'Manual entry',isVerified:txnType==='INCOME',points:0,status:txnType==='INCOME'?'VERIFIED':'COMPLETED'});
+        closeModal();
+    }catch(err){console.error(err);alert('Save failed.');}
+    finally{btn.disabled=false;document.getElementById('mSaveText').textContent='Save Transaction';document.getElementById('mSaveLoader').classList.add('hidden');}
+}
+
+// ── BUDGET MODAL ──
+document.getElementById('editBudgetBtn').addEventListener('click',()=>{document.getElementById('budgetInput').value=Math.round(budget);document.getElementById('budgetModal').classList.remove('hidden');});
+function closeBudgetModal(){document.getElementById('budgetModal').classList.add('hidden');}
+async function saveBudget(){const v=parseFloat(document.getElementById('budgetInput').value);if(!v||v<=0||!currentUser)return;try{await db.collection('users').doc(currentUser.uid).set({monthlyBudget:v},{merge:true});closeBudgetModal();}catch(e){console.error(e);}}
+</script>
+</body>
+</html>
