@@ -50,6 +50,15 @@ class FirebaseAuthService(
         _currentUser.value = null
     }
 
+    suspend fun sendPasswordResetEmail(email: String): Result<Unit> {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     private suspend fun ensureUserProfile(user: FirebaseUser) {
         val document = firestore.collection("users").document(user.uid)
         val snapshot = document.get().await()

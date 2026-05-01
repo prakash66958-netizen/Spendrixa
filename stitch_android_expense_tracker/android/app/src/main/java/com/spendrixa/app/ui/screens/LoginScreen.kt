@@ -32,6 +32,7 @@ fun LoginScreen(
     var showPassword by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    var successMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(authService.isLoggedIn) {
         if (authService.isLoggedIn) {
@@ -121,13 +122,50 @@ fun LoginScreen(
                 shape = RoundedCornerShape(16.dp)
             )
 
-            // Error Message
-            errorMessage?.let {
+            if (!isSignUp) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.CenterEnd
+                ) {
+                    TextButton(
+                        onClick = {
+                            if (email.isBlank()) {
+                                errorMessage = "Please enter your email address first"
+                                return@TextButton
+                            }
+                            isLoading = true
+                            errorMessage = null
+                            successMessage = null
+                            scope.launch {
+                                authService.sendPasswordResetEmail(email)
+                                    .onSuccess {
+                                        successMessage = "Password reset email sent! Check your inbox"
+                                    }
+                                    .onFailure { e ->
+                                        errorMessage = e.message ?: "Failed to send reset email"
+                                    }
+                                isLoading = false
+                            }
+                        },
+                        enabled = !isLoading
+                    ) {
+                        Text(
+                            text = "Forgot Password?",
+                            fontSize = 12.sp,
+                            color = Primary
+                        )
+                    }
+                }
+            }
+
+            // Messages
+            if (errorMessage != null || successMessage != null) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = it,
-                    color = Error,
-                    fontSize = 12.sp
+                    text = errorMessage ?: successMessage ?: "",
+                    color = if (errorMessage != null) Error else Secondary,
+                    fontSize = 12.sp,
+                    textAlign = TextAlign.Center
                 )
             }
 
