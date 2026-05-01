@@ -109,7 +109,10 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
                     transactions: transactions,
                     currencyCode: currencyCode,
                   ),
-                  SettingsPage(),
+                  SettingsPage(
+                    userId: widget.user.uid,
+                    repository: widget.repository,
+                  ),
                 ];
 
                 return Scaffold(

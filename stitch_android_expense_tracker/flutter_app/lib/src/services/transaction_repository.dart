@@ -44,6 +44,19 @@ class TransactionRepository {
         );
   }
 
+  Future<List<AppTransaction>> getTransactions(String userId) async {
+    final QuerySnapshot<Map<String, dynamic>> snapshot = await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('transactions')
+        .orderBy('date', descending: true)
+        .get();
+
+    return snapshot.docs
+        .map(AppTransaction.fromFirestore)
+        .toList(growable: false);
+  }
+
   Stream<double> watchMonthlyBudget(String userId) {
     return _firestore.collection('users').doc(userId).snapshots().map(
       (DocumentSnapshot<Map<String, dynamic>> snapshot) {
