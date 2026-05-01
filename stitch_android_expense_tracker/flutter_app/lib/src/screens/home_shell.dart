@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/app_transaction.dart';
 import '../services/transaction_repository.dart';
+import '../services/widget_handler.dart';
 import '../theme/app_theme.dart';
 import 'add_transaction_screen.dart';
 import 'dashboard_page.dart';
@@ -57,7 +58,8 @@ class _HomeShellState extends State<HomeShell> with WidgetsBindingObserver {
     );
   }
 
-  Future<void> _signOut() {
+  Future<void> _signOut() async {
+    await WidgetHandler.updateLastTransaction('Please login to see data');
     return FirebaseAuth.instance.signOut();
   }
 

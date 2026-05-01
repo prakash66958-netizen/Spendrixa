@@ -1,6 +1,7 @@
 package com.vault.lumina
 
 import android.app.Activity
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.widget.ArrayAdapter
@@ -9,12 +10,28 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.Toast
+import com.google.firebase.auth.FirebaseAuth
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
 
 class QuickAddActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Check if user is logged in
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            Toast.makeText(this, "Please login to Spendrixa first", Toast.LENGTH_LONG).show()
+
+            // Open the main app (which will show the login screen)
+            val launchIntent = packageManager.getLaunchIntentForPackage(packageName)
+            if (launchIntent != null) {
+                startActivity(launchIntent)
+            }
+
+            finish()
+            return
+        }
 
         // Make the activity window transparent to show our custom rounded corners
         window.setBackgroundDrawableResource(android.R.color.transparent)
