@@ -70,8 +70,6 @@ import java.util.Locale
 @Composable
 fun DashboardScreen(
     repository: TransactionRepository,
-    isSmsPermissionGranted: Boolean,
-    onEnableSmsAutoImport: () -> Unit,
     onAddTransaction: () -> Unit,
     onViewHistory: () -> Unit,
     onViewInsights: () -> Unit,
@@ -119,13 +117,6 @@ fun DashboardScreen(
             }
 
             item { Spacer(modifier = Modifier.height(20.dp)) }
-
-            if (!isSmsPermissionGranted) {
-                item {
-                    SmsAutoImportCard(onEnableSmsAutoImport = onEnableSmsAutoImport)
-                }
-                item { Spacer(modifier = Modifier.height(20.dp)) }
-            }
 
             item {
                 Row(
@@ -398,42 +389,6 @@ private fun QuickFigureCard(
                 fontWeight = FontWeight.Bold,
                 color = OnSurface
             )
-        }
-    }
-}
-
-@Composable
-private fun SmsAutoImportCard(
-    onEnableSmsAutoImport: () -> Unit
-) {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = PrimaryContainer)
-    ) {
-        Column(modifier = Modifier.padding(20.dp)) {
-            Text(
-                text = "Enable SMS auto-import",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = OnSurface
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "Turn on SMS access only if you want new bank messages to create transactions automatically.",
-                fontSize = 13.sp,
-                color = OnSurfaceVariant
-            )
-            Spacer(modifier = Modifier.height(16.dp))
-            Button(
-                onClick = onEnableSmsAutoImport,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Primary,
-                    contentColor = OnPrimary
-                )
-            ) {
-                Text(text = "Enable")
-            }
         }
     }
 }
