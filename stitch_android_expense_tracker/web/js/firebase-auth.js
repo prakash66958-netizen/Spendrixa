@@ -7,6 +7,7 @@ const formSubtitle = document.getElementById('formSubtitle');
 const submitBtn = document.getElementById('submitBtn');
 const btnText = document.getElementById('btnText');
 const errorMessage = document.getElementById('errorMessage');
+const forgotPasswordBtn = document.getElementById('forgotPassword');
 
 // Check if already logged in
 auth.onAuthStateChanged(user => {
@@ -59,5 +60,24 @@ form.addEventListener('submit', async (e) => {
         submitBtn.disabled = false;
         btnText.classList.remove('hidden');
         document.getElementById('btnLoader').classList.add('hidden');
+    }
+});
+
+forgotPasswordBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('email').value;
+    if (!email) {
+        errorMessage.textContent = 'Please enter your email address first.';
+        errorMessage.style.color = '#ba1a1a';
+        return;
+    }
+
+    try {
+        await auth.sendPasswordResetEmail(email);
+        errorMessage.textContent = 'Password reset email sent! Check your inbox.';
+        errorMessage.style.color = '#006c49'; // secondary/success color
+    } catch (error) {
+        errorMessage.textContent = error.message;
+        errorMessage.style.color = '#ba1a1a';
     }
 });
