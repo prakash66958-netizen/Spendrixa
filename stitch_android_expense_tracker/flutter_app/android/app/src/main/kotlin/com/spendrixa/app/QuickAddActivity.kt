@@ -4,9 +4,12 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.Spinner
 import android.widget.Toast
@@ -42,6 +45,8 @@ class QuickAddActivity : Activity() {
         val editAmount = findViewById<EditText>(R.id.editAmount)
         val spinnerCategory = findViewById<Spinner>(R.id.spinnerCategory)
         val radioExpense = findViewById<RadioButton>(R.id.radioExpense)
+        val layoutNote = findViewById<LinearLayout>(R.id.layoutNote)
+        val editNote = findViewById<EditText>(R.id.editNote)
         val btnSave = findViewById<Button>(R.id.btnSave)
         val btnCancel = findViewById<Button>(R.id.btnCancel)
 
@@ -53,6 +58,20 @@ class QuickAddActivity : Activity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, categories)
         spinnerCategory.adapter = adapter
         spinnerCategory.setSelection(categories.indexOf("OTHER"))
+
+        // Show/Hide note based on category
+        spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val selected = categories[position]
+                if (selected == "OTHER") {
+                    layoutNote.visibility = View.VISIBLE
+                    editNote.requestFocus()
+                } else {
+                    layoutNote.visibility = View.GONE
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
         btnCancel.setOnClickListener {
             finish()
@@ -67,11 +86,12 @@ class QuickAddActivity : Activity() {
 
             val category = spinnerCategory.selectedItem.toString()
             val type = if (radioExpense.isChecked) "EXPENSE" else "INCOME"
+            val note = editNote.text.toString().trim()
 
             // Trigger the Dart background callback
             val pendingIntent = HomeWidgetBackgroundIntent.getBroadcast(
                 this,
-                Uri.parse("quickadd://add_custom?category=$category&amount=$amountStr&type=$type")
+                Uri.parse("quickadd://add_custom?category=$category&amount=$amountStr&type=$type&note=${Uri.encode(note)}")
             )
             pendingIntent.send()
 

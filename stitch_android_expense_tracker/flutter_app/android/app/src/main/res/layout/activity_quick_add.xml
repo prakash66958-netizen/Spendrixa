@@ -82,7 +82,39 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:background="@drawable/input_bg"
-        android:layout_marginBottom="24dp" />
+        android:layout_marginBottom="16dp" />
+
+    <!-- Note Input (Initially hidden) -->
+    <LinearLayout
+        android:id="@+id/layoutNote"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_marginBottom="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Note"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textAllCaps="true"
+            android:textColor="#64748B"
+            android:layout_marginBottom="4dp" />
+
+        <EditText
+            android:id="@+id/editNote"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:hint="What was this for?"
+            android:background="@drawable/input_bg"
+            android:padding="12dp"
+            android:textSize="14sp"
+            android:textColor="#0F172A"
+            android:inputType="textCapSentences" />
+    </LinearLayout>
 
     <!-- Action Buttons -->
     <LinearLayout

@@ -40,6 +40,7 @@ Future<void> backgroundCallback(Uri? uri) async {
     final String category = uri.queryParameters['category'] ?? 'OTHER';
     final String amountStr = uri.queryParameters['amount'] ?? '100';
     final String type = uri.queryParameters['type'] ?? AppTransaction.expenseType;
+    final String? note = uri.queryParameters['note'];
     final double amount = double.tryParse(amountStr) ?? 100;
 
     User? user = FirebaseAuth.instance.currentUser;
@@ -64,7 +65,7 @@ Future<void> backgroundCallback(Uri? uri) async {
       amount: amount,
       category: category,
       type: type,
-      note: 'Quick add from widget',
+      note: (note != null && note.isNotEmpty) ? note : 'Quick add from widget',
       merchant: '',
       date: DateTime.now(),
       paymentMethod: 'Widget Quick-add',
