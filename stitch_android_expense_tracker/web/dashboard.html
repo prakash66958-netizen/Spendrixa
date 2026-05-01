@@ -123,6 +123,9 @@ body{font-family:'Inter',sans-serif}
 <div id="page-transactions" class="page fade">
     <div class="mb-6 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div><h2 class="text-h1">Transactions</h2><p class="text-on-surface-variant mt-1">Manage and track all financial activities.</p></div>
+        <button id="exportCsvBtn" onclick="exportToCSV()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-semibold shadow-sm transition-all active:scale-95">
+            <span class="material-symbols-outlined text-lg">download</span>Export CSV
+        </button>
     </div>
     <div class="flex gap-3 mb-5 overflow-x-auto pb-1">
         <button data-filter="All" class="txn-chip px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap bg-primary text-on-primary">All</button>
@@ -409,6 +412,34 @@ async function saveTxn(){
 document.getElementById('editBudgetBtn').addEventListener('click',()=>{document.getElementById('budgetInput').value=Math.round(budget);document.getElementById('budgetModal').classList.remove('hidden');});
 function closeBudgetModal(){document.getElementById('budgetModal').classList.add('hidden');}
 async function saveBudget(){const v=parseFloat(document.getElementById('budgetInput').value);if(!v||v<=0||!currentUser)return;try{await db.collection('users').doc(currentUser.uid).set({monthlyBudget:v},{merge:true});closeBudgetModal();}catch(e){console.error(e);}}
+
+// ── EXPORT ──
+function exportToCSV() {
+    if (!allTxns.length) { alert('No transactions to export.'); return; }
+    const headers = ['Date', 'Merchant', 'Amount', 'Category', 'Type', 'Payment Method', 'Note', 'Status', 'Verified', 'Points'];
+    const rows = allTxns.map(t => [
+        dateFmt.format(parseDate(t.date)) + ' ' + timeFmt.format(parseDate(t.date)),
+        t.merchant || '',
+        t.amount || 0,
+        t.category || 'OTHER',
+        t.type || 'EXPENSE',
+        t.paymentMethod || 'Manual entry',
+        (t.note || '').replace(/"/g, '""'),
+        t.status || 'COMPLETED',
+        t.isVerified ? 'Yes' : 'No',
+        t.points || 0
+    ]);
+    const csvContent = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `spendrixa_export_${Date.now()}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 </script>
 </body>
 </html>
