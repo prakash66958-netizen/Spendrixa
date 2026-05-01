@@ -1,0 +1,8 @@
+[build]
+  base = "stitch_android_expense_tracker/web"
+  publish = "."
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
