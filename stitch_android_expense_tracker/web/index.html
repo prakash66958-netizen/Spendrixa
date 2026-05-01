@@ -275,10 +275,12 @@
         const form = e.target;
         const formData = new FormData(form);
 
-        fetch("/", {
+        fetch(form.action, {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: new URLSearchParams(formData).toString(),
+            body: formData,
+            headers: {
+                'Accept': 'application/json'
+            }
         })
         .then(() => {
             form.classList.add('hidden');
