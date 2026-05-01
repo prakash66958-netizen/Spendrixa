@@ -12,6 +12,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import es.antonborri.home_widget.HomeWidgetBackgroundIntent
+import com.vault.lumina.R
 
 class QuickAddActivity : Activity() {
 
