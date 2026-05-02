@@ -8,6 +8,8 @@ const submitBtn = document.getElementById('submitBtn');
 const btnText = document.getElementById('btnText');
 const errorMessage = document.getElementById('errorMessage');
 const forgotPasswordBtn = document.getElementById('forgotPassword');
+const usernameContainer = document.getElementById('usernameContainer');
+const usernameInput = document.getElementById('username');
 
 // Check if already logged in
 auth.onAuthStateChanged(user => {
@@ -28,11 +30,15 @@ function updateUI() {
         toggleAuthBtn.textContent = 'Sign In';
         formSubtitle.textContent = 'Create your account';
         btnText.textContent = 'Create Account';
+        usernameContainer.classList.remove('hidden');
+        usernameInput.required = true;
     } else {
         toggleText.textContent = "Don't have an account?";
         toggleAuthBtn.textContent = 'Sign Up';
         formSubtitle.textContent = 'Welcome back';
         btnText.textContent = 'Sign In';
+        usernameContainer.classList.add('hidden');
+        usernameInput.required = false;
     }
     errorMessage.textContent = '';
 }
@@ -41,6 +47,7 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const username = usernameInput.value.trim().toLowerCase();
 
     submitBtn.disabled = true;
     btnText.classList.add('hidden');
@@ -49,8 +56,30 @@ form.addEventListener('submit', async (e) => {
 
     try {
         if (isSignUp) {
+            // Check username uniqueness
+            const usernameDoc = await db.collection('usernames').doc(username).get();
+            if (usernameDoc.exists) {
+                throw new Error('Username is already taken. Please choose another.');
+            }
+
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            await userCredential.user.sendEmailVerification();
+            const user = userCredential.user;
+
+            // Save user profile with username
+            await db.collection('users').doc(user.uid).set({
+                email: email,
+                name: username, // Default name to username
+                username: username,
+                role: 'user',
+                createdAt: Date.now()
+            }, { merge: true });
+
+            // Claim username
+            await db.collection('usernames').doc(username).set({
+                uid: user.uid
+            });
+
+            await user.sendEmailVerification();
         } else {
             await auth.signInWithEmailAndPassword(email, password);
         }

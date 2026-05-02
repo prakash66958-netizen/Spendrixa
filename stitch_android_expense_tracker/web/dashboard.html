@@ -44,6 +44,7 @@ body{font-family:'Inter',sans-serif}
         <a href="#" data-tab="budgets" class="nav-link flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">account_balance_wallet</span>Budgets</a>
         <a href="#" data-tab="reports" class="nav-link flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">analytics</span>Reports</a>
         <a href="#" onclick="toggleContactModal(true)" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">support_agent</span>Support</a>
+        <a href="admin/index.html" id="adminLink" class="hidden flex items-center gap-3 text-amber-400 hover:text-white hover:bg-slate-800 rounded-lg mx-2 px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">admin_panel_settings</span>Admin Console</a>
     </nav>
     <div class="mt-auto px-2">
         <a href="#" id="sideLogout" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg px-4 py-2 text-sm tracking-wide transition-all"><span class="material-symbols-outlined">logout</span>Logout</a>
@@ -322,6 +323,14 @@ auth.onAuthStateChanged(user=>{
     }
 
     currentUser=user;document.getElementById('userEmail').textContent=user.email||'';
+
+    // Check for admin role
+    db.collection('users').doc(user.uid).get().then(doc => {
+        if (doc.exists && doc.data().role === 'admin') {
+            document.getElementById('adminLink').classList.remove('hidden');
+        }
+    });
+
     loadData(user);
 });
 document.getElementById('sideLogout').addEventListener('click',e=>{e.preventDefault();cleanup();auth.signOut();});

@@ -70,9 +70,11 @@ import java.util.Locale
 @Composable
 fun InsightsScreen(
     repository: TransactionRepository,
+    userRole: String?,
     onBack: () -> Unit,
     onNavigateDashboard: () -> Unit,
-    onNavigateHistory: () -> Unit
+    onNavigateHistory: () -> Unit,
+    onNavigateAdmin: () -> Unit
 ) {
     val transactions by repository.observeTransactions().collectAsState(initial = emptyList())
 
@@ -394,9 +396,11 @@ fun InsightsScreen(
         SpendrixaBottomBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             currentRoute = "insights",
+            userRole = userRole,
             onDashboardClick = onNavigateDashboard,
             onHistoryClick = onNavigateHistory,
-            onInsightsClick = { }
+            onInsightsClick = { },
+            onAdminClick = onNavigateAdmin
         )
     }
 }

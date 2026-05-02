@@ -27,6 +27,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isSignUp by remember { mutableStateOf(false) }
     var showPassword by remember { mutableStateOf(false) }
@@ -69,6 +70,27 @@ fun LoginScreen(
             )
 
             Spacer(modifier = Modifier.height(48.dp))
+
+            if (isSignUp) {
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it },
+                    label = { Text("Username") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Primary,
+                        unfocusedBorderColor = OutlineVariant,
+                        focusedLabelColor = Primary,
+                        unfocusedLabelColor = OnSurfaceVariant,
+                        cursorColor = Primary,
+                        focusedTextColor = OnSurface,
+                        unfocusedTextColor = OnSurface
+                    ),
+                    shape = RoundedCornerShape(16.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
 
             // Email Field
             OutlinedTextField(
@@ -178,7 +200,12 @@ fun LoginScreen(
                     errorMessage = null
                     scope.launch {
                         val result = if (isSignUp) {
-                            authService.signUp(email, password)
+                            if (username.isBlank()) {
+                                errorMessage = "Username cannot be empty"
+                                isLoading = false
+                                return@launch
+                            }
+                            authService.signUp(email, password, username)
                         } else {
                             authService.signIn(email, password)
                         }
@@ -190,7 +217,7 @@ fun LoginScreen(
                         isLoading = false
                     }
                 },
-                enabled = email.isNotBlank() && password.isNotBlank() && !isLoading,
+                enabled = email.isNotBlank() && password.isNotBlank() && (!isSignUp || username.isNotBlank()) && !isLoading,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),

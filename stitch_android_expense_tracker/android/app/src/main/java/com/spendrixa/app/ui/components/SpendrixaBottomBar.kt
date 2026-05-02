@@ -34,9 +34,11 @@ import com.spendrixa.app.ui.theme.SurfaceContainer
 fun SpendrixaBottomBar(
     modifier: Modifier = Modifier,
     currentRoute: String,
+    userRole: String? = null,
     onDashboardClick: () -> Unit,
     onHistoryClick: () -> Unit,
-    onInsightsClick: () -> Unit
+    onInsightsClick: () -> Unit,
+    onAdminClick: () -> Unit = {}
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -67,6 +69,14 @@ fun SpendrixaBottomBar(
                 isSelected = currentRoute == "insights",
                 onClick = onInsightsClick
             )
+            if (userRole == "admin") {
+                BottomNavItem(
+                    icon = Icons.Default.AdminPanelSettings,
+                    label = "Admin",
+                    isSelected = currentRoute == "admin_dashboard",
+                    onClick = onAdminClick
+                )
+            }
         }
     }
 }

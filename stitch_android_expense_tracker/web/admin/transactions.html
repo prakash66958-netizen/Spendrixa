@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Global Transaction Logs | Spendrixa Admin</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#000000",
+                        "surface": "#f8f9ff",
+                        "outline": "#76777d"
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+    </style>
+</head>
+<body class="bg-surface font-body-md text-slate-900 antialiased">
+    <aside class="h-screen w-64 border-r fixed left-0 top-0 bg-slate-50 border-slate-200 flex flex-col py-6 z-50">
+        <div class="px-6 mb-8 flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-slate-900 flex items-center justify-center">
+                <img alt="Spendrixa Logo" class="w-8 h-8 object-contain rounded-sm" src="https://lh3.googleusercontent.com/aida/ADBb0ujbE9VpTJRZbuqCoHCIzib6X-nU4NxMQ3bj5XpCk-9zOx0nSfAL9ghbcDww8oQx4Qsy8l5kKqs_8qJqE0-dWhPzyUtER1gRFgi8mCO2UJFobKV7LW_aFHTJ2fhFOad9Ctumn4wckol7ow-ge7b4vfHvQuhTms23RJ11VShShlawHAYKlaTZm4GLkwkWGqbNEXAUhs4xkJ1COu6ClsxNjJRyBl1FKelOmMWZVY1Yfcmk0vUmtUqRGaMLXzI"/>
+            </div>
+            <div>
+                <h1 class="text-lg font-black leading-tight">Spendrixa</h1>
+                <p class="text-xs text-slate-500 font-medium">Console</p>
+            </div>
+        </div>
+        <nav class="flex-1 px-4 space-y-1">
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 transition-all rounded-md" href="index.html">
+                <span class="material-symbols-outlined">dashboard</span>
+                <span>Overview</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-100 transition-all rounded-md" href="users.html">
+                <span class="material-symbols-outlined">group</span>
+                <span>Users</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 bg-white text-blue-600 shadow-sm border-r-4 border-blue-600 font-medium rounded-l-md" href="transactions.html">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+                <span>Transactions</span>
+            </a>
+        </nav>
+        <div class="px-4 mt-auto border-t border-slate-200 pt-6">
+            <a class="flex items-center gap-3 px-4 py-2 text-slate-500 hover:bg-slate-100 rounded-md text-xs" href="../dashboard.html">
+                <span class="material-symbols-outlined text-sm">arrow_back</span>
+                <span>Back to App</span>
+            </a>
+        </div>
+    </aside>
+
+    <main class="ml-64 min-h-screen">
+        <header class="bg-white shadow-sm border-b border-slate-200 flex items-center justify-between px-6 py-4 sticky top-0 z-40">
+            <h2 class="text-lg font-bold">Global Transaction Logs</h2>
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+                    <input class="pl-9 pr-4 py-1.5 border border-slate-200 rounded-full text-sm focus:ring-2 focus:ring-blue-500 outline-none w-64 bg-slate-50" placeholder="Filter platform logs..." type="text" id="txnSearch"/>
+                </div>
+            </div>
+        </header>
+
+        <div class="p-8 max-w-7xl mx-auto">
+            <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead class="bg-slate-50 text-slate-500 uppercase text-xs font-bold border-b border-slate-100">
+                            <tr>
+                                <th class="px-6 py-4">TXN ID</th>
+                                <th class="px-6 py-4">User Alias</th>
+                                <th class="px-6 py-4">Type</th>
+                                <th class="px-6 py-4">Category</th>
+                                <th class="px-6 py-4 text-right">Amount</th>
+                                <th class="px-6 py-4">Status</th>
+                                <th class="px-6 py-4">Timestamp</th>
+                                <th class="px-6 py-4 text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-table-body" class="divide-y divide-slate-100">
+                            <tr><td colspan="8" class="px-6 py-12 text-center text-slate-400 italic">Synchronizing global financial records...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="p-6 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <p class="text-xs text-slate-500 font-medium" id="transaction-count-footer">Auditing ledger...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="../js/firebase-config.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

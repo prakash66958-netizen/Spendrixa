@@ -70,9 +70,11 @@ import java.util.Locale
 @Composable
 fun DashboardScreen(
     repository: TransactionRepository,
+    userRole: String?,
     onAddTransaction: () -> Unit,
     onViewHistory: () -> Unit,
     onViewInsights: () -> Unit,
+    onNavigateAdmin: () -> Unit,
     onLogout: () -> Unit
 ) {
     val transactions by repository.observeTransactions().collectAsState(initial = emptyList())
@@ -242,9 +244,11 @@ fun DashboardScreen(
         SpendrixaBottomBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             currentRoute = "dashboard",
+            userRole = userRole,
             onDashboardClick = { },
             onHistoryClick = onViewHistory,
-            onInsightsClick = onViewInsights
+            onInsightsClick = onViewInsights,
+            onAdminClick = onNavigateAdmin
         )
 
         FloatingActionButton(

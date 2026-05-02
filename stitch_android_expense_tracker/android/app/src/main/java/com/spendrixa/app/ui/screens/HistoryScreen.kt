@@ -66,9 +66,11 @@ import java.util.Locale
 @Composable
 fun HistoryScreen(
     repository: TransactionRepository,
+    userRole: String?,
     onBack: () -> Unit,
     onNavigateDashboard: () -> Unit,
-    onNavigateInsights: () -> Unit
+    onNavigateInsights: () -> Unit,
+    onNavigateAdmin: () -> Unit
 ) {
     val transactions by repository.observeTransactions().collectAsState(initial = emptyList())
     var searchQuery by remember { mutableStateOf("") }
@@ -251,9 +253,11 @@ fun HistoryScreen(
         SpendrixaBottomBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             currentRoute = "history",
+            userRole = userRole,
             onDashboardClick = onNavigateDashboard,
             onHistoryClick = { },
-            onInsightsClick = onNavigateInsights
+            onInsightsClick = onNavigateInsights,
+            onAdminClick = onNavigateAdmin
         )
     }
 }

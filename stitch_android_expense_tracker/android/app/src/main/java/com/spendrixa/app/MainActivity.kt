@@ -13,12 +13,17 @@ import androidx.navigation.compose.rememberNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.spendrixa.app.data.repository.TransactionRepository
 import com.spendrixa.app.firebase.FirebaseAuthService
+import com.spendrixa.app.data.repository.AdminRepository
 import com.spendrixa.app.ui.screens.AddTransactionScreen
 import com.spendrixa.app.ui.screens.DashboardScreen
 import com.spendrixa.app.ui.screens.HistoryScreen
 import com.spendrixa.app.ui.screens.InsightsScreen
 import com.spendrixa.app.ui.screens.LoginScreen
 import com.spendrixa.app.ui.screens.VerifyEmailScreen
+import com.spendrixa.app.ui.screens.admin.AdminDashboardScreen
+import com.spendrixa.app.ui.screens.admin.AdminTransactionLogsScreen
+import com.spendrixa.app.ui.screens.admin.AdminUserDetailScreen
+import com.spendrixa.app.ui.screens.admin.AdminUserManagementScreen
 import com.spendrixa.app.ui.theme.SpendrixaTheme
 
 private object Routes {
@@ -28,18 +33,24 @@ private object Routes {
     const val ADD_TRANSACTION = "add_transaction"
     const val HISTORY = "history"
     const val INSIGHTS = "insights"
+    const val ADMIN_DASHBOARD = "admin_dashboard"
+    const val ADMIN_USERS = "admin_users"
+    const val ADMIN_TRANSACTIONS = "admin_transactions"
+    const val ADMIN_USER_DETAIL = "admin_user_detail/{userId}"
 }
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var authService: FirebaseAuthService
     private lateinit var repository: TransactionRepository
+    private lateinit var adminRepository: AdminRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         authService = FirebaseAuthService(FirebaseAuth.getInstance())
         repository = TransactionRepository()
+        adminRepository = AdminRepository()
 
         setContent {
             SpendrixaTheme {
@@ -50,6 +61,7 @@ class MainActivity : ComponentActivity() {
                     SpendrixaApp(
                         authService = authService,
                         repository = repository,
+                        adminRepository = adminRepository,
                         onLoginStateChanged = { }
                     )
                 }
@@ -62,10 +74,12 @@ class MainActivity : ComponentActivity() {
 fun SpendrixaApp(
     authService: FirebaseAuthService,
     repository: TransactionRepository,
+    adminRepository: AdminRepository,
     onLoginStateChanged: (Boolean) -> Unit
 ) {
     val navController = rememberNavController()
     val currentUser by authService.currentUser.collectAsState()
+    val userRole by authService.userRole.collectAsState()
     val isLoggedIn = currentUser != null
     val isEmailVerified = currentUser?.isEmailVerified == true
 
@@ -118,6 +132,7 @@ fun SpendrixaApp(
         composable(Routes.DASHBOARD) {
             DashboardScreen(
                 repository = repository,
+                userRole = userRole,
                 onAddTransaction = { navController.navigate(Routes.ADD_TRANSACTION) },
                 onViewHistory = {
                     navController.navigate(Routes.HISTORY) {
@@ -128,6 +143,9 @@ fun SpendrixaApp(
                     navController.navigate(Routes.INSIGHTS) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateAdmin = {
+                    navController.navigate(Routes.ADMIN_DASHBOARD)
                 },
                 onLogout = {
                     authService.signOut()
@@ -146,6 +164,7 @@ fun SpendrixaApp(
         composable(Routes.HISTORY) {
             HistoryScreen(
                 repository = repository,
+                userRole = userRole,
                 onBack = { navController.popBackStack() },
                 onNavigateDashboard = {
                     navController.navigate(Routes.DASHBOARD) {
@@ -157,12 +176,16 @@ fun SpendrixaApp(
                     navController.navigate(Routes.INSIGHTS) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateAdmin = {
+                    navController.navigate(Routes.ADMIN_DASHBOARD)
                 }
             )
         }
         composable(Routes.INSIGHTS) {
             InsightsScreen(
                 repository = repository,
+                userRole = userRole,
                 onBack = { navController.popBackStack() },
                 onNavigateDashboard = {
                     navController.navigate(Routes.DASHBOARD) {
@@ -174,7 +197,43 @@ fun SpendrixaApp(
                     navController.navigate(Routes.HISTORY) {
                         launchSingleTop = true
                     }
+                },
+                onNavigateAdmin = {
+                    navController.navigate(Routes.ADMIN_DASHBOARD)
                 }
+            )
+        }
+        composable(Routes.ADMIN_DASHBOARD) {
+            AdminDashboardScreen(
+                adminRepository = adminRepository,
+                onNavigateUsers = { navController.navigate(Routes.ADMIN_USERS) },
+                onNavigateTransactions = { navController.navigate(Routes.ADMIN_TRANSACTIONS) },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.ADMIN_USERS) {
+            AdminUserManagementScreen(
+                adminRepository = adminRepository,
+                onNavigateDetail = { uid -> navController.navigate("admin_user_detail/$uid") },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(Routes.ADMIN_TRANSACTIONS) {
+            AdminTransactionLogsScreen(
+                adminRepository = adminRepository,
+                onNavigateUser = { uid -> navController.navigate("admin_user_detail/$uid") },
+                onBack = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = Routes.ADMIN_USER_DETAIL,
+            arguments = listOf(androidx.navigation.navArgument("userId") { type = androidx.navigation.NavType.StringType })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            AdminUserDetailScreen(
+                adminRepository = adminRepository,
+                userId = userId,
+                onBack = { navController.popBackStack() }
             )
         }
     }

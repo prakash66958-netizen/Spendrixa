@@ -16,6 +16,28 @@ class FirebaseAuthService(
     private val _currentUser = MutableStateFlow<FirebaseUser?>(auth.currentUser)
     val currentUser: StateFlow<FirebaseUser?> = _currentUser
 
+    private val _userRole = MutableStateFlow<String?> (null)
+    val userRole: StateFlow<String?> = _userRole
+
+    init {
+        auth.addAuthStateListener { firebaseAuth ->
+            val user = firebaseAuth.currentUser
+            _currentUser.value = user
+            if (user != null) {
+                fetchUserRole(user.uid)
+            } else {
+                _userRole.value = null
+            }
+        }
+    }
+
+    private fun fetchUserRole(uid: String) {
+        firestore.collection("users").document(uid).get()
+            .addOnSuccessListener { document ->
+                _userRole.value = document.getString("role") ?: "user"
+            }
+    }
+
     val isLoggedIn: Boolean
         get() = auth.currentUser != null
 
@@ -32,14 +54,34 @@ class FirebaseAuthService(
         }
     }
 
-    suspend fun signUp(email: String, password: String): Result<FirebaseUser> {
+    suspend fun signUp(email: String, password: String, username: String): Result<FirebaseUser> {
         return try {
+            val usernameDoc = firestore.collection("usernames").document(username.lowercase()).get().await()
+            if (usernameDoc.exists()) {
+                return Result.failure(Exception("Username already taken"))
+            }
+
             val result = auth.createUserWithEmailAndPassword(email, password).await()
-            result.user?.let {
+            result.user?.let { user ->
                 it.sendEmailVerification().await()
-                ensureUserProfile(it)
-                _currentUser.value = it
-                Result.success(it)
+
+                // Save user profile with username
+                val profile = mutableMapOf<String, Any>(
+                    "email" to email,
+                    "name" to username,
+                    "username" to username.lowercase(),
+                    "role" to "user",
+                    "monthlyBudget" to TransactionRepository.DEFAULT_MONTHLY_BUDGET,
+                    "createdAt" to System.currentTimeMillis()
+                )
+                firestore.collection("users").document(user.uid).set(profile).await()
+
+                // Claim username
+                firestore.collection("usernames").document(username.lowercase())
+                    .set(mapOf("uid" to user.uid)).await()
+
+                _currentUser.value = user
+                Result.success(user)
             } ?: Result.failure(Exception("Sign up failed"))
         } catch (e: Exception) {
             Result.failure(e)
