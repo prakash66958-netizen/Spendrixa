@@ -15,5 +15,7 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXPENSE_TRACKER_1B22D }}'
           projectId: expense-tracker-1b22d
+          entryPoint: .
+          buildCommand: ""
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels

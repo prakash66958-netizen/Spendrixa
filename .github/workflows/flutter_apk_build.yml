@@ -6,15 +6,18 @@ on:
   pull_request:
     branches: [ "main" ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Java
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -34,20 +37,20 @@ jobs:
         run: flutter build apk --release
         working-directory: stitch_android_expense_tracker/flutter_app
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v3
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: stitch_android_expense_tracker/flutter_app/build/app/outputs/flutter-apk/app-release.apk
 
       - name: Create Release
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
-          artifacts: "stitch_android_expense_tracker/flutter_app/build/app/outputs/flutter-apk/app-release.apk"
-          tag: "v1.0.${{ github.run_number }}"
-          name: "Release v1.0.${{ github.run_number }}"
+          tag_name: latest
+          name: Latest Build
+          files: stitch_android_expense_tracker/flutter_app/build/app/outputs/flutter-apk/app-release.apk
           body: "Automated Flutter APK build from main branch."
-          allowUpdates: true
-          makeLatest: true
-          token: ${{ secrets.GITHUB_TOKEN }}
+          make_latest: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
