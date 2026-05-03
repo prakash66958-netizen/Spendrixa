@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../services/transaction_repository.dart';
 import '../../theme/app_theme.dart';
+import 'admin_user_management_page.dart';
+import 'admin_transaction_logs_page.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key, required this.repository});
@@ -103,7 +105,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           subtitle: 'Manage and audit users',
           icon: Icons.people_rounded,
           onClick: () {
-            // TODO: Implement User Management Page
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AdminUserManagementPage(
+                  repository: widget.repository,
+                ),
+              ),
+            );
           },
         ),
         const SizedBox(height: 12),
@@ -112,7 +120,13 @@ class _AdminDashboardPageState extends State<AdminDashboardPage> {
           subtitle: 'Global financial audit',
           icon: Icons.history_edu_rounded,
           onClick: () {
-            // TODO: Implement Global Transaction Logs Page
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => AdminTransactionLogsPage(
+                  repository: widget.repository,
+                ),
+              ),
+            );
           },
         ),
       ],
