@@ -5,6 +5,8 @@ name: Deploy to Firebase Hosting on merge
   push:
     branches:
       - main
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
@@ -16,6 +18,5 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_EXPENSE_TRACKER_1B22D }}'
           projectId: expense-tracker-1b22d
           entryPoint: .
-          buildCommand: ""
         env:
           FIREBASE_CLI_PREVIEWS: hostingchannels
