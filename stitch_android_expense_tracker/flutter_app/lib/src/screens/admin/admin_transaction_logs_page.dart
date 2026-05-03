@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../services/transaction_repository.dart';
 import '../../theme/app_theme.dart';
-import '../../models/app_transaction.dart';
 import 'package:intl/intl.dart';
 
 class AdminTransactionLogsPage extends StatelessWidget {
@@ -59,7 +58,7 @@ class AdminTransactionLogsPage extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: (isIncome ? Colors.green : Colors.red).withOpacity(0.1),
+                          color: (isIncome ? Colors.green : Colors.red).withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(

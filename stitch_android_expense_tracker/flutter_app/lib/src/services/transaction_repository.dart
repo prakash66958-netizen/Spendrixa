@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
@@ -163,14 +165,109 @@ class TransactionRepository {
   }
 
   Stream<List<Map<String, dynamic>>> watchGlobalTransactions() {
-    // This is expensive but for a small app it works.
-    // In production, use a flat collection or a Cloud Function to aggregate.
-    return _firestore.collectionGroup('transactions').snapshots().map(
-      (QuerySnapshot<Map<String, dynamic>> snapshot) {
-        return snapshot.docs.map((QueryDocumentSnapshot<Map<String, dynamic>> d) {
-          return <String, dynamic>{'id': d.id, ...d.data()};
-        }).toList();
-      },
-    );
+    final StreamController<List<Map<String, dynamic>>> controller =
+        StreamController<List<Map<String, dynamic>>>();
+    final Map<String, List<Map<String, dynamic>>> transactionsByUser =
+        <String, List<Map<String, dynamic>>>{};
+    final transactionSubscriptions =
+        <StreamSubscription<QuerySnapshot<Map<String, dynamic>>>>[];
+    StreamSubscription<QuerySnapshot<Map<String, dynamic>>>? usersSubscription;
+
+    int version = 0;
+
+    int transactionTime(Map<String, dynamic> transaction) {
+      final Object? value = transaction['date'];
+      if (value is Timestamp) {
+        return value.millisecondsSinceEpoch;
+      }
+      if (value is int) {
+        return value;
+      }
+      if (value is double) {
+        return value.toInt();
+      }
+      return 0;
+    }
+
+    void emitTransactions() {
+      if (controller.isClosed) {
+        return;
+      }
+
+      final List<Map<String, dynamic>> transactions =
+          transactionsByUser.values
+              .expand((List<Map<String, dynamic>> userTransactions) {
+                return userTransactions;
+              })
+              .toList(growable: false)
+            ..sort((Map<String, dynamic> a, Map<String, dynamic> b) {
+              return transactionTime(b).compareTo(transactionTime(a));
+            });
+
+      controller.add(transactions);
+    }
+
+    usersSubscription = _firestore.collection('users').snapshots().listen((
+      QuerySnapshot<Map<String, dynamic>> usersSnapshot,
+    ) async {
+      version++;
+      final int activeVersion = version;
+
+      for (final subscription in transactionSubscriptions) {
+        await subscription.cancel();
+      }
+      transactionSubscriptions.clear();
+      transactionsByUser.clear();
+
+      if (usersSnapshot.docs.isEmpty) {
+        emitTransactions();
+        return;
+      }
+
+      for (final QueryDocumentSnapshot<Map<String, dynamic>> userDoc
+          in usersSnapshot.docs) {
+        final Map<String, dynamic> userData = userDoc.data();
+        final String userId = userDoc.id;
+
+        final subscription = userDoc.reference
+            .collection('transactions')
+            .snapshots()
+            .listen((QuerySnapshot<Map<String, dynamic>> transactionsSnapshot) {
+              if (activeVersion != version) {
+                return;
+              }
+
+              transactionsByUser[userId] = transactionsSnapshot.docs
+                  .map((QueryDocumentSnapshot<Map<String, dynamic>> doc) {
+                    return <String, dynamic>{
+                      'id': doc.id,
+                      'userId': userId,
+                      'userName':
+                          userData['name'] ??
+                          userData['displayName'] ??
+                          userData['email'] ??
+                          'User',
+                      'userCurrency': userData['currency'] ?? defaultCurrency,
+                      ...doc.data(),
+                    };
+                  })
+                  .toList(growable: false);
+
+              emitTransactions();
+            }, onError: controller.addError);
+
+        transactionSubscriptions.add(subscription);
+      }
+    }, onError: controller.addError);
+
+    controller.onCancel = () async {
+      await usersSubscription?.cancel();
+      for (final subscription in transactionSubscriptions) {
+        await subscription.cancel();
+      }
+      transactionSubscriptions.clear();
+    };
+
+    return controller.stream;
   }
 }
