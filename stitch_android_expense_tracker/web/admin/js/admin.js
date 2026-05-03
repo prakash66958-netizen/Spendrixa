@@ -55,16 +55,16 @@ auth.onAuthStateChanged(async (user) => {
 
 function initializePage() {
     const path = window.location.pathname;
-    if (path.includes('index.html') || path.endsWith('/admin/')) {
-        loadOverview();
-    } else if (path.includes('users.html')) {
+    if (path.includes('users.html') || path.endsWith('/users')) {
         loadUsers();
-    } else if (path.includes('transactions.html')) {
+    } else if (path.includes('transactions.html') || path.endsWith('/transactions')) {
         loadTransactions();
-    } else if (path.includes('user_detail.html')) {
+    } else if (path.includes('user_detail.html') || path.endsWith('/user_detail')) {
         const urlParams = new URLSearchParams(window.location.search);
         const uid = urlParams.get('uid');
         if (uid) loadUserDetail(uid);
+    } else {
+        loadOverview();
     }
 }
 
