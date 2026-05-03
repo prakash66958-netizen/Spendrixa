@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBalanceWallet
+import androidx.compose.material.icons.filled.AdminPanelSettings
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material3.Icon
@@ -69,7 +70,7 @@ fun SpendrixaBottomBar(
                 isSelected = currentRoute == "insights",
                 onClick = onInsightsClick
             )
-            if (userRole == "admin") {
+            if (userRole?.lowercase() == "admin") {
                 BottomNavItem(
                     icon = Icons.Default.AdminPanelSettings,
                     label = "Admin",
