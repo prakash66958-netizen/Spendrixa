@@ -77,6 +77,14 @@ class TransactionRepository {
     );
   }
 
+  Stream<String?> watchUserRole(String userId) {
+    return _firestore.collection('users').doc(userId).snapshots().map(
+      (DocumentSnapshot<Map<String, dynamic>> snapshot) {
+        return snapshot.data()?['role'] as String?;
+      },
+    );
+  }
+
   Future<void> updateCurrency(String userId, String currency) {
     return _firestore.collection('users').doc(userId).set(
       <String, dynamic>{'currency': currency},
@@ -120,6 +128,49 @@ class TransactionRepository {
     return _firestore.collection('users').doc(userId).set(
       <String, dynamic>{'monthlyBudget': amount},
       SetOptions(merge: true),
+    );
+  }
+
+  // Admin Methods
+  Future<Map<String, dynamic>> getGlobalStats() async {
+    final QuerySnapshot<Map<String, dynamic>> users =
+        await _firestore.collection('users').get();
+
+    int totalTransactions = 0;
+    double totalRevenue = 0.0;
+
+    for (final DocumentSnapshot<Map<String, dynamic>> userDoc in users.docs) {
+      final QuerySnapshot<Map<String, dynamic>> txns =
+          await userDoc.reference.collection('transactions').get();
+      totalTransactions += txns.docs.length;
+      for (final DocumentSnapshot<Map<String, dynamic>> txn in txns.docs) {
+        final double amt = (txn.data()?['amount'] as num?)?.toDouble() ?? 0.0;
+        if (txn.data()?['type'] == AppTransaction.incomeType) {
+          totalRevenue += amt;
+        }
+      }
+    }
+
+    return <String, dynamic>{
+      'totalUsers': users.docs.length,
+      'totalTransactions': totalTransactions,
+      'totalRevenue': totalRevenue,
+    };
+  }
+
+  Stream<QuerySnapshot<Map<String, dynamic>>> watchAllUsers() {
+    return _firestore.collection('users').snapshots();
+  }
+
+  Stream<List<Map<String, dynamic>>> watchGlobalTransactions() {
+    // This is expensive but for a small app it works.
+    // In production, use a flat collection or a Cloud Function to aggregate.
+    return _firestore.collectionGroup('transactions').snapshots().map(
+      (QuerySnapshot<Map<String, dynamic>> snapshot) {
+        return snapshot.docs.map((QueryDocumentSnapshot<Map<String, dynamic>> d) {
+          return <String, dynamic>{'id': d.id, ...d.data()};
+        }).toList();
+      },
     );
   }
 }

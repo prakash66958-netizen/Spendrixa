@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.Spendrixa" parent="android:Theme.Material.NoActionBar">
-        <item name="android:statusBarColor">#00161c</item>
-        <item name="android:navigationBarColor">#00161c</item>
-        <item name="android:windowBackground">#00161c</item>
-    </style>
-</resources>
