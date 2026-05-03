@@ -1,0 +1,19 @@
+{
+  "hosting": {
+    "site": "spendrixa",
+    "public": "stitch_android_expense_tracker/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ],
+    "cleanUrls": true,
+    "trailingSlash": false
+  }
+}
