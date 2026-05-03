@@ -31,7 +31,7 @@ const dateFormat = new Intl.DateTimeFormat('en-US', {
 // Admin check logic
 auth.onAuthStateChanged(async (user) => {
     if (!user) {
-        window.location.href = '../index.html';
+        window.location.href = '/index.html';
         return;
     }
 
@@ -39,7 +39,7 @@ auth.onAuthStateChanged(async (user) => {
         const userDoc = await db.collection('users').doc(user.uid).get();
         if (!userDoc.exists || userDoc.data().role !== 'admin') {
             alert('Access denied. Administrator privileges required.');
-            window.location.href = '../dashboard.html';
+            window.location.href = '/dashboard.html';
             return;
         }
 
@@ -49,7 +49,7 @@ auth.onAuthStateChanged(async (user) => {
         initializePage();
     } catch (error) {
         console.error('Error verifying admin status:', error);
-        window.location.href = '../dashboard.html';
+        window.location.href = '/dashboard.html';
     }
 });
 
@@ -130,7 +130,7 @@ async function loadOverview() {
                     const formatter = getCurrencyFormatter(txn.userCurrency);
                     const row = document.createElement('tr');
                     row.className = 'hover:bg-slate-50 transition-colors cursor-pointer';
-                    row.onclick = () => window.location.href = `user_detail.html?uid=${txn.userId}`;
+                    row.onclick = () => window.location.href = `/admin/user_detail.html?uid=${txn.userId}`;
                     row.innerHTML = `
                         <td class="px-6 py-4 font-mono text-xs text-blue-600 font-bold">${txn.id.substring(0, 8)}</td>
                         <td class="px-6 py-4 font-semibold">${txn.merchant || 'Internal'}</td>
@@ -159,7 +159,7 @@ async function loadOverview() {
                     const timeText = timeAgo < 1 ? 'Just now' : timeAgo < 60 ? `${timeAgo}m ago` : `${Math.floor(timeAgo/60)}h ago`;
                     const item = document.createElement('div');
                     item.className = 'flex gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100 hover:border-blue-200 transition-colors cursor-pointer';
-                    item.onclick = () => window.location.href = `user_detail.html?uid=${txn.userId}`;
+                    item.onclick = () => window.location.href = `/admin/user_detail.html?uid=${txn.userId}`;
                     item.innerHTML = `
                         <div class="shrink-0 w-8 h-8 rounded-full ${txn.type === 'INCOME' ? 'bg-emerald-500' : 'bg-blue-500'} flex items-center justify-center text-white shadow-sm">
                             <span class="material-symbols-outlined text-sm">${txn.type === 'INCOME' ? 'add_card' : 'payments'}</span>
@@ -204,7 +204,7 @@ async function loadUsers() {
 
             const row = document.createElement('tr');
             row.className = 'hover:bg-slate-50 transition-colors cursor-pointer';
-            row.onclick = () => window.location.href = `user_detail.html?uid=${uid}`;
+            row.onclick = () => window.location.href = `/admin/user_detail.html?uid=${uid}`;
             row.innerHTML = `
                 <td class="px-6 py-4">
                     <div class="flex items-center gap-3">
@@ -267,7 +267,7 @@ async function loadTransactions() {
             const formatter = getCurrencyFormatter(txn.userCurrency);
             const row = document.createElement('tr');
             row.className = 'hover:bg-slate-50 transition-colors cursor-pointer';
-            row.onclick = () => window.location.href = `user_detail.html?uid=${txn.userId}`;
+            row.onclick = () => window.location.href = `/admin/user_detail.html?uid=${txn.userId}`;
             row.innerHTML = `
                 <td class="px-6 py-4 font-mono text-[10px] text-blue-600 font-bold">${txn.id.substring(0, 8)}</td>
                 <td class="px-6 py-4 text-xs font-bold text-slate-900">${txn.userName}</td>
@@ -312,7 +312,7 @@ async function loadUserDetail(uid) {
         const userDoc = await db.collection('users').doc(uid).get();
         if (!userDoc.exists) {
             alert('User not found');
-            window.location.href = 'users.html';
+            window.location.href = '/admin/users.html';
             return;
         }
 
