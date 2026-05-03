@@ -33,7 +33,7 @@ class AdminUserManagementPage extends StatelessWidget {
 
           return ListView.separated(
             padding: const EdgeInsets.all(16),
-            itemCount: users.size,
+            itemCount: users.length,
             separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final user = users[index].data();

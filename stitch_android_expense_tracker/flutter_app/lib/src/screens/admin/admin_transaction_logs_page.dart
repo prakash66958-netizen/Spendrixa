@@ -59,12 +59,12 @@ class AdminTransactionLogsPage extends StatelessWidget {
                       Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: (isIncome ? Colors.emerald : Colors.red).withOpacity(0.1),
+                          color: (isIncome ? Colors.green : Colors.red).withOpacity(0.1),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
                           isIncome ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded,
-                          color: isIncome ? Colors.emerald : Colors.red,
+                          color: isIncome ? Colors.green : Colors.red,
                           size: 20,
                         ),
                       ),
@@ -91,7 +91,7 @@ class AdminTransactionLogsPage extends StatelessWidget {
                         '${isIncome ? '+' : '-'}${TransactionRepository.currencyFormat('USD').format(amount)}',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: isIncome ? Colors.emerald : AppTheme.onSurface,
+                          color: isIncome ? Colors.green : AppTheme.onSurface,
                         ),
                       ),
                     ],

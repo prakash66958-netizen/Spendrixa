@@ -13,6 +13,7 @@ class AppTheme {
   static const Color onSurface = Color(0xFFCCE7F1);
   static const Color onSurfaceVariant = Color(0xFFC1C7CB);
   static const Color outline = Color(0xFF8B9295);
+  static const Color secondaryContainer = Color(0xFF00F4FE);
 
   static ThemeData darkTheme() {
     const ColorScheme scheme = ColorScheme(

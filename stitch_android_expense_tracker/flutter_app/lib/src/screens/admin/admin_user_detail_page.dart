@@ -124,20 +124,18 @@ class AdminUserDetailPage extends StatelessWidget {
                             ),
                             child: ListTile(
                               title: Text(
-                                txn.merchant.isEmpty ? txn.category.name : txn.merchant,
+                                txn.merchant.isEmpty ? prettifyLabel(txn.category) : txn.merchant,
                                 style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                               subtitle: Text(
-                                DateFormat('MMM dd, yyyy').format(
-                                  DateTime.fromMillisecondsSinceEpoch(txn.date),
-                                ),
+                                DateFormat('MMM dd, yyyy').format(txn.date),
                               ),
                               trailing: Text(
                                 '${txn.type == AppTransaction.incomeType ? '+' : '-'}${TransactionRepository.currencyFormat('USD').format(txn.amount)}',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: txn.type == AppTransaction.incomeType
-                                      ? Colors.emerald
+                                      ? Colors.green
                                       : AppTheme.onSurface,
                                 ),
                               ),
